@@ -1,0 +1,795 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  CheckCircle, ShieldCheck, Globe, 
+  MapPin, Mail, Phone, Building2, Award, 
+  TrendingUp, AlertTriangle, ChevronRight,
+  Landmark, FileCheck2, Globe2, Menu, X
+} from 'lucide-react';
+
+// --- TRANSLATIONS DICTIONARY ---
+const dict = {
+  en: {
+    nav: { services: "Services", whyMe: "Why Lukas", experience: "Track Record", contact: "Contact", bookBtn: "Book Consultation (500 AED)" },
+    hero: {
+      badge: "Former Commercial Diplomat in UAE | GCC Market Entry Specialist",
+      title1: "Open doors for your product in the ",
+      titleHighlight: "Emirates",
+      title2: " & Middle East.",
+      subtitle: "Strategic market research, overcoming legislative hurdles, and direct connections to key retail chains in the GCC. Backed by 7 years of economic diplomacy in Abu Dhabi.",
+      btnPrimary: "Explore Market Analysis",
+      btnSecondary: "Personal Consultation (500 AED)",
+      stat1: "7 Years", stat1Sub: "Commercial Diplomat in Middle East",
+      stat2: "50+", stat2Sub: "Brands successfully launched in GCC",
+      stat3: "150M+ AED", stat3Sub: "Generated trade & project value"
+    },
+    services: {
+      title: "Services & UAE Entry Strategy",
+      subtitle: "Clear structured deliverables with no hidden fees and no risk. Accurate data for executive decisions.",
+      badge: "Most popular for EU firms",
+      card1Title: "Market & Strategic Report",
+      card1Price: "5,000 AED",
+      card1List: [
+        "Detailed mapping of retail market (Carrefour, LuLu, Spinneys, Waitrose, etc.).",
+        "Competitor analysis & on-the-shelf price benchmarking in UAE.",
+        "Recommended Go-To-Market model (direct supply, distributor, HoReCa).",
+        "Identification of hidden risks (listing fees, slotting charges, logistical traps).",
+        "Legislative overview, Halal certifications, and chain requirements.",
+        "ROI evaluation of trade shows (Gulfood, ISM) & access to sold-out capacities."
+      ],
+      card1Bonus: "Bonus included:", card1BonusText: "Free 1-hour post-report strategy review to walk through findings.",
+      card1Btn: "Commission Report",
+      card2Title: "Strategic Consultation",
+      card2Price: "500 AED", card2PriceSub: "/ hour",
+      card2Desc: "Initial 1-on-1 consultation to assess your product's potential, legislative queries, and market readiness before major commitments.",
+      card2Guarantee: "Credit Provision:", card2GuaranteeText: "100% of this fee (500 AED) is credited toward the final report cost if purchased.",
+      card2Btn: "Book a Session",
+      card3Title: "Key Account Management",
+      card3Price: "Bespoke Retainer",
+      card3Desc: "Active representation in buyer negotiations, commercial terms alignment, national pavilion building, and exclusive GCC trade show access.",
+      card3List: ["Long-term commercial representation", "Logistics & customs clearance advisory", "Private networking & buyer access"],
+      card3Btn: "Request Custom Quote"
+    },
+    roi: {
+      title: "Why does the 5,000 AED report make sense?",
+      subtitle: "Compare the cost of independent research versus strategic data investment.",
+      btnTrial: "Trial & Error Journey", btnExpert: "With Lukas Zamrzla",
+      trialTitle: "Independent Trip to Dubai",
+      trialList: [
+        "Flights and 1-week accommodation: ~15,000 AED",
+        "Ineffective meetings with the wrong buyers or middle-men",
+        "Hidden listing fees signed out of ignorance",
+        "Shipments held at customs due to incorrect labeling"
+      ],
+      trialLoss: "Estimated loss: ", trialLossVal: "45,000+ AED & 6 months time",
+      expertTitle: "Strategic Preparation",
+      expertList: [
+        "Complete market data on your desk without traveling",
+        "Direct contacts to vetted distributors and retail chains",
+        "Advance knowledge of current legislative requirements",
+        "Pre-negotiated commercial terms leveraging local networks"
+      ],
+      expertInvest: "Your investment: ", expertInvestVal: "5,000 AED (Zero lost time & capital)"
+    },
+    whyMe: {
+      title: "Why entrust your expansion to me?",
+      desc: "I represent the interests of European companies in the Middle East. I combine the negotiating power gained during 7 years of economic diplomacy with the hard business approach of the corporate environment.",
+      p1Title: "Diplomatic Reach", p1Desc: "7 years as Regional Commercial & Agricultural Director at the Embassy of the Czech Republic in Abu Dhabi (2019–2026).",
+      p2Title: "C-Level Network", p2Desc: "Established network of buyers, owners, and directors of major retail chains and distributors in the UAE and GCC.",
+      p3Title: "Trade Show Dominance", p3Desc: "Experience building national pavilions and securing participation in sold-out trade shows with long waiting lists.",
+      time1Date: "2019–2026", time1Title: "Regional Commercial & Agricultural Director", time1Org: "Embassy of the Czech Republic, Abu Dhabi", time1Desc: "Managed projects with 2M+ AED budgets. Facilitated successful entry for 50+ international F&B and agricultural companies into the GCC.",
+      time2Date: "2017–2019", time2Title: "Manager Key Accounts", time2Org: "Booking.com B.V., Prague", time2Desc: "Managed the most profitable portfolio and global hotel chains (Marriott, Accor, IHG) generating over 20M AED monthly.",
+      time3Date: "2013–2014", time3Title: "Sales Manager", time3Org: "Preciosa Lighting, Dubai", time3Desc: "Delivered bespoke luxury lighting projects across the UAE, including deliveries to palaces and royal families.",
+      eduTitle: "Master of International Business (MIB)", eduDesc: "With Distinction/Honors. HULT International Business School (Dubai & NY)."
+    },
+    contact: {
+      title: "Start your expansion today.",
+      desc: "Book a consultation or order a market analysis right away. Gain certainty for your investment decisions.",
+      formTitle: "Inquiry Form",
+      name: "Full Name", company: "Company", website: "Website / Product", interest: "I am interested in:",
+      opt1: "1. Strategic Consultation (500 AED)", opt2: "2. Complete Market Report (5,000 AED)", opt3: "3. Bespoke Representation",
+      msg: "Message (Optional)", submit: "Submit Inquiry"
+    }
+  },
+  cs: {
+    nav: { services: "Služby", whyMe: "Proč Lukas", experience: "Zkušenosti", contact: "Kontakt", bookBtn: "Konzultace (500 AED)" },
+    hero: {
+      badge: "Bývalý obchodní diplomat v SAE | GCC Market Entry Specialist",
+      title1: "Otevřete svému produktu dveře v ",
+      titleHighlight: "Emirátech",
+      title2: " a GCC.",
+      subtitle: "Strategický průzkum trhu, překonání legislativních překážek a přímé napojení na klíčové řetězce v GCC. S garancí know-how z 7 let ekonomické diplomacie v Abú Dhabí.",
+      btnPrimary: "Prozkoumat balíček tržní analýzy",
+      btnSecondary: "Osobní konzultace (500 AED)",
+      stat1: "7 let", stat1Sub: "Obchodní diplomat pro Blízký východ",
+      stat2: "50+", stat2Sub: "Úspěšně zavedených značek na trhu GCC",
+      stat3: "150M+ AED", stat3Sub: "Hodnota realizovaného obchodu a projektů"
+    },
+    services: {
+      title: "Služby & Vstupní strategie do SAE",
+      subtitle: "Jasné strukturované výstupy bez skrytých poplatků a bez rizika. Přesná data pro vaše exekutivní rozhodnutí.",
+      badge: "Nejoblíbenější pro CZ/SK firmy",
+      card1Title: "Tržní & Strategický Report",
+      card1Price: "5 000 AED",
+      card1List: [
+        "Detailní mapování maloobchodního trhu (Carrefour, LuLu, Spinneys, Waitrose atd.).",
+        "Analýza konkurence a cenový benchmarking přímo z pultů v SAE.",
+        "Doporučený Go-To-Market model (přímý dodavatel, exkluzivní distributor, HoReCa).",
+        "Identifikace skrytých rizik (zalistovací poplatky, rabaty, logistické pasti).",
+        "Přehled legislativy, Halal certifikací a požadavků řetězců.",
+        "Vyhodnocení ROI veletrhů a přístup k vyprodaným kapacitám."
+      ],
+      card1Bonus: "Bonus v ceně:", card1BonusText: "Zdarma 1 hodina post-report konzultace k procházení výstupů.",
+      card1Btn: "Objednat Report",
+      card2Title: "Strategická Konzultace",
+      card2Price: "500 AED", card2PriceSub: "/ hod",
+      card2Desc: "Vstupní 1-on-1 konzultace pro posouzení potenciálu vašeho produktu, legislativních dotazů a připravenosti pro trh před zahájením větších kroků.",
+      card2Guarantee: "Garance vrácení:", card2GuaranteeText: "100% částky se v případě objednání plného reportu odečítá z výsledné ceny.",
+      card2Btn: "Rezervovat Termín",
+      card3Title: "Key Account Management",
+      card3Price: "Bespoke Retainer",
+      card3Desc: "Aktivní zastupování na jednáních s nákupčími, vyjednávání komerčních podmínek, budování národních expozic a exkluzivní vstup na vyprodané veletrhy v GCC.",
+      card3List: ["Dlouhodobé obchodní zastoupení", "Řešení logistiky a celního řízení", "Privátní networkingové akce"],
+      card3Btn: "Poptat na míru"
+    },
+    roi: {
+      title: "Proč dává report za 5 000 AED smysl?",
+      subtitle: "Porovnejte si náklady na vlastní průzkum s investicí do strategických dat.",
+      btnTrial: "Cesta pokus-omyl", btnExpert: "S Lukasem Zamrzlou",
+      trialTitle: "Samostatná cesta do Dubaje",
+      trialList: [
+        "Letenky a ubytování na týden: ~15 000 AED",
+        "Neefektivní schůzky s nesprávnými nákupčími či překupníky",
+        "Skryté zalistovací poplatky podepsané z neznalosti",
+        "Zásilky zadržené na celnici kvůli špatné etiketě"
+      ],
+      trialLoss: "Odhadovaná ztráta: ", trialLossVal: "45 000+ AED a 6 měsíců času",
+      expertTitle: "Strategická příprava",
+      expertList: [
+        "Kompletní tržní data na vašem stole bez nutnosti cestovat",
+        "Přímé kontakty na prověřené distributory a řetězce",
+        "Znalost aktuálních legislativních požadavků předem",
+        "Vyjednané komerční podmínky díky lokální síti"
+      ],
+      expertInvest: "Vaše investice: ", expertInvestVal: "5 000 AED (Nula ztraceného času a kapitálu)"
+    },
+    whyMe: {
+      title: "Proč svěřit expanzi právě mně?",
+      desc: "Zastupuji zájmy evropských firem v regionu Blízkého východu. Kombinuji vyjednávací sílu nabytou během 7 let v ekonomické diplomacii s tvrdým byznysovým přístupem korporátního prostředí.",
+      p1Title: "Diplomatický dosah", p1Desc: "7 let působení jako regionální obchodní a zemědělský diplomat Velvyslanectví ČR v Abú Dhabí (2019–2026).",
+      p2Title: "Síť na nejvyšší úrovni", p2Desc: "Vybudovaná síť kontaktů na nákupčí, majitele a ředitelství hlavních maloobchodních řetězců a distributorů v SAE a GCC.",
+      p3Title: "Dominance na veletrzích", p3Desc: "Zkušenosti s budováním národních pavilonů a schopnost zprostředkovat účast na vyprodaných veletrzích s dlouhými waiting-listy.",
+      time1Date: "2019–2026", time1Title: "Regional Commercial & Agricultural Director", time1Org: "Embassy of the Czech Republic, Abu Dhabi", time1Desc: "Řízení projektů s rozpočty 2M+ AED. Zprostředkování úspěšného vstupu pro více než 50 mezinárodních F&B a zemědělských firem do regionu GCC.",
+      time2Date: "2017–2019", time2Title: "Manager Key Accounts", time2Org: "Booking.com B.V., Prague", time2Desc: "Vedení nejziskovějšího portfolia a globálních hotelových řetězců (Marriott, Accor, IHG) s generováním přes 20M AED měsíčně.",
+      time3Date: "2013–2014", time3Title: "Sales Manager", time3Org: "Preciosa Lighting, Dubai", time3Desc: "Dodávky luxusních na míru šitých projektů v SAE, včetně dodávek pro paláce a královské rodiny.",
+      eduTitle: "Master of International Business (MIB)", eduDesc: "S vyznamenáním. HULT International Business School (Dubai & NY)."
+    },
+    contact: {
+      title: "Zahajte expanzi ještě dnes.",
+      desc: "Rezervujte si konzultaci nebo rovnou objednejte analýzu trhu. Získejte jistotu pro svá investiční rozhodnutí.",
+      formTitle: "Poptávkový formulář",
+      name: "Jméno a Příjmení", company: "Společnost", website: "Webové stránky / Produkt", interest: "Mám zájem o:",
+      opt1: "1. Strategická Konzultace (500 AED)", opt2: "2. Kompletní Tržní Report (5 000 AED)", opt3: "3. Individuální zastoupení",
+      msg: "Zpráva (volitelné)", submit: "Odeslat poptávku"
+    }
+  }
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+};
+
+export default function App() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [roiMode, setRoiMode] = useState('expert'); 
+  const [lang, setLang] = useState('en');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const t = dict[lang];
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#0A0F1D] text-white font-sans selection:bg-[#D4AF37] selection:text-[#0A0F1D] relative overflow-x-hidden">
+      
+      {/* Ambient Background Glows */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#D4AF37]/5 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#131B2E] blur-[150px]" />
+      </div>
+
+      {/* 1. NAVIGATION BAR (Fixed Glassmorphic Header) */}
+      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || mobileMenuOpen ? 'bg-[#0A0F1D]/95 backdrop-blur-lg border-b border-white/10 py-4' : 'bg-transparent py-6'}`}>
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+          <a href="#" className="flex items-center gap-1 cursor-pointer">
+            <span className="text-xl font-bold tracking-widest text-white">LUKAS ZAMRZLA</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mb-1"></span>
+          </a>
+          
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex gap-8 items-center text-sm font-medium text-white/70">
+            <a href="#services" className="hover:text-[#D4AF37] transition-colors">{t.nav.services}</a>
+            <a href="#why-me" className="hover:text-[#D4AF37] transition-colors">{t.nav.whyMe}</a>
+            <a href="#experience" className="hover:text-[#D4AF37] transition-colors">{t.nav.experience}</a>
+            <a href="#contact" className="hover:text-[#D4AF37] transition-colors">{t.nav.contact}</a>
+          </nav>
+          
+          {/* Desktop Language Switcher & CTA */}
+          <div className="hidden lg:flex items-center gap-6">
+            <button 
+              onClick={() => setLang(lang === 'en' ? 'cs' : 'en')}
+              className="flex items-center gap-2 text-xs font-bold tracking-wider text-white/50 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5 border border-white/10"
+            >
+              <Globe2 size={16} className={lang === 'en' ? 'text-[#D4AF37]' : ''} />
+              <span className={lang === 'en' ? 'text-white' : ''}>EN</span>
+              <span className="text-white/20">|</span>
+              <span className={lang === 'cs' ? 'text-white' : ''}>CZ</span>
+            </button>
+
+            <a href="#contact" className="flex items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] px-6 py-2.5 rounded-sm font-semibold transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_25px_rgba(212,175,55,0.5)]">
+              {t.nav.bookBtn}
+            </a>
+          </div>
+
+          {/* Mobile Navigation Toggle Button */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <button 
+              onClick={() => setLang(lang === 'en' ? 'cs' : 'en')}
+              className="flex items-center gap-1 text-xs font-bold text-[#D4AF37] bg-white/5 border border-white/10 px-2.5 py-1.5 rounded"
+            >
+              <Globe2 size={14} />
+              <span>{lang.toUpperCase()}</span>
+            </button>
+
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-white p-2 focus:outline-none"
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X size={26} className="text-[#D4AF37]" /> : <Menu size={26} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Slide-down Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-[#0A0F1D] border-b border-white/10 px-6 py-6"
+            >
+              <nav className="flex flex-col gap-4 text-base font-medium">
+                <a 
+                  href="#services" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 border-b border-white/5 text-white/80 hover:text-[#D4AF37]"
+                >
+                  {t.nav.services}
+                </a>
+                <a 
+                  href="#why-me" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 border-b border-white/5 text-white/80 hover:text-[#D4AF37]"
+                >
+                  {t.nav.whyMe}
+                </a>
+                <a 
+                  href="#experience" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 border-b border-white/5 text-white/80 hover:text-[#D4AF37]"
+                >
+                  {t.nav.experience}
+                </a>
+                <a 
+                  href="#contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 border-b border-white/5 text-white/80 hover:text-[#D4AF37]"
+                >
+                  {t.nav.contact}
+                </a>
+                <a 
+                  href="#contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-2 text-center bg-[#D4AF37] text-[#0A0F1D] py-3 rounded-sm font-bold"
+                >
+                  {t.nav.bookBtn}
+                </a>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      <main className="relative z-10">
+        
+        {/* 2. HERO SECTION */}
+        <section className="min-h-screen flex items-center pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
+          <div className="w-full grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Content (Headline & Copy) */}
+            <motion.div 
+              initial="hidden" animate="visible" variants={staggerContainer}
+              className="lg:col-span-7 space-y-8"
+            >
+              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs md:text-sm font-medium text-[#D4AF37]">
+                <ShieldCheck size={16} className="shrink-0" />
+                <span>{t.hero.badge}</span>
+              </motion.div>
+              
+              <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                {t.hero.title1}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB]">{t.hero.titleHighlight}</span>
+                {t.hero.title2}
+              </motion.h1>
+              
+              <motion.p variants={fadeUp} className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl leading-relaxed">
+                {t.hero.subtitle}
+              </motion.p>
+              
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 pt-4">
+                <a href="#services" className="flex justify-center items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] px-8 py-4 rounded-sm font-bold transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] text-center">
+                  {t.hero.btnPrimary}
+                </a>
+                <a href="#contact" className="flex justify-center items-center gap-2 bg-transparent border border-white/20 hover:border-white/50 hover:bg-white/5 text-white px-8 py-4 rounded-sm font-bold transition-all text-center">
+                  {t.hero.btnSecondary}
+                </a>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Content (Photo & Floating Stats Card Layout) */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="lg:col-span-5 relative mt-8 lg:mt-0"
+            >
+              {/* Background ambient gold glow */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#D4AF37]/20 to-transparent rounded-3xl blur-3xl translate-x-5 translate-y-5"></div>
+              
+              {/* Image Container */}
+              <div className="relative z-10 w-full max-w-md mx-auto lg:max-w-none">
+                <img 
+                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800" 
+                  alt="Lukas Zamrzla" 
+                  className="w-full h-[450px] sm:h-[550px] lg:h-[600px] object-cover rounded-2xl border border-white/10 shadow-2xl grayscale-[15%] contrast-125"
+                />
+
+                {/* Floating Stat Card 1 */}
+                <div className="hidden sm:flex absolute -left-8 top-10 z-20 bg-[#131B2E]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+                    <Landmark size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-white">{t.hero.stat1}</div>
+                    <div className="text-xs text-white/60">{t.hero.stat1Sub}</div>
+                  </div>
+                </div>
+
+                {/* Floating Stat Card 2 */}
+                <div className="hidden sm:flex absolute -right-6 top-1/2 -translate-y-1/2 z-20 bg-[#131B2E]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-white">{t.hero.stat2}</div>
+                    <div className="text-xs text-white/60 w-28">{t.hero.stat2Sub}</div>
+                  </div>
+                </div>
+
+                {/* Floating Stat Card 3 */}
+                <div className="hidden sm:flex absolute -left-6 bottom-10 z-20 bg-[#131B2E]/90 backdrop-blur-xl border border-[#D4AF37]/30 rounded-2xl p-4 shadow-[0_0_30px_rgba(212,175,55,0.15)] items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+                    <TrendingUp size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-white">{t.hero.stat3}</div>
+                    <div className="text-xs text-[#D4AF37] font-medium">{t.hero.stat3Sub}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Stats Grid */}
+              <div className="grid grid-cols-3 gap-2 mt-6 sm:hidden">
+                <div className="bg-[#131B2E] border border-white/10 rounded-xl p-3 text-center">
+                  <div className="text-base font-bold text-[#D4AF37]">{t.hero.stat1}</div>
+                  <div className="text-[10px] text-white/60 leading-tight mt-1">{t.hero.stat1Sub}</div>
+                </div>
+                <div className="bg-[#131B2E] border border-white/10 rounded-xl p-3 text-center">
+                  <div className="text-base font-bold text-white">{t.hero.stat2}</div>
+                  <div className="text-[10px] text-white/60 leading-tight mt-1">{t.hero.stat2Sub}</div>
+                </div>
+                <div className="bg-[#131B2E] border border-[#D4AF37]/30 rounded-xl p-3 text-center">
+                  <div className="text-base font-bold text-[#D4AF37]">{t.hero.stat3}</div>
+                  <div className="text-[10px] text-white/60 leading-tight mt-1">{t.hero.stat3Sub}</div>
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 3. CORE OFFERING (Service Cards) */}
+        <section id="services" className="py-24 bg-[#131B2E]/40 border-t border-white/5 relative">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+              className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+            >
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">{t.services.title}</h2>
+              <p className="text-white/60 text-lg">{t.services.subtitle}</p>
+            </motion.div>
+
+            <div className="grid lg:grid-cols-3 gap-8 items-stretch">
+              
+              {/* Card 1: Main Market Report (Featured Card) */}
+              <motion.div 
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="lg:col-span-1 bg-[#131B2E] border-2 border-[#D4AF37] rounded-3xl p-8 relative flex flex-col justify-between shadow-[0_0_30px_rgba(212,175,55,0.15)] order-1 lg:order-2"
+              >
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#D4AF37] text-[#0A0F1D] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">
+                  {t.services.badge}
+                </div>
+
+                <div>
+                  <div className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-2">{t.services.card1Title}</div>
+                  <div className="text-4xl font-extrabold text-white mb-6">{t.services.card1Price}</div>
+                  
+                  <ul className="space-y-4 mb-8 text-sm text-white/80">
+                    {t.services.card1List.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <CheckCircle size={18} className="text-[#D4AF37] shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="space-y-4 pt-6 border-t border-white/10">
+                  <div className="bg-[#D4AF37]/10 rounded-xl p-3 text-xs text-[#D4AF37]">
+                    <strong>{t.services.card1Bonus}</strong> {t.services.card1BonusText}
+                  </div>
+                  <a href="#contact" className="w-full flex justify-center items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-3.5 rounded-xl transition-all text-center">
+                    {t.services.card1Btn}
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* Card 2: Strategic Consultation */}
+              <motion.div 
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="bg-[#131B2E]/80 border border-white/10 hover:border-white/20 rounded-3xl p-8 flex flex-col justify-between transition-all order-2 lg:order-1"
+              >
+                <div>
+                  <div className="text-sm font-bold text-white/50 uppercase tracking-widest mb-2">{t.services.card2Title}</div>
+                  <div className="text-4xl font-extrabold text-white mb-2">
+                    {t.services.card2Price} <span className="text-lg font-normal text-white/50">{t.services.card2PriceSub}</span>
+                  </div>
+                  <p className="text-white/70 text-sm mb-6 leading-relaxed">{t.services.card2Desc}</p>
+                  
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-emerald-400 mb-6">
+                    <strong>{t.services.card2Guarantee}</strong> {t.services.card2GuaranteeText}
+                  </div>
+                </div>
+
+                <a href="#contact" className="w-full flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-xl transition-all text-center">
+                  {t.services.card2Btn}
+                </a>
+              </motion.div>
+
+              {/* Card 3: Key Account Retainer */}
+              <motion.div 
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="bg-[#131B2E]/80 border border-white/10 hover:border-white/20 rounded-3xl p-8 flex flex-col justify-between transition-all order-3"
+              >
+                <div>
+                  <div className="text-sm font-bold text-white/50 uppercase tracking-widest mb-2">{t.services.card3Title}</div>
+                  <div className="text-3xl font-bold text-white mb-4">{t.services.card3Price}</div>
+                  <p className="text-white/70 text-sm mb-6 leading-relaxed">{t.services.card3Desc}</p>
+                  
+                  <ul className="space-y-3 mb-6 text-sm text-white/70">
+                    {t.services.card3List.map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <ChevronRight size={16} className="text-[#D4AF37]" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <a href="#contact" className="w-full flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-xl transition-all text-center">
+                  {t.services.card3Btn}
+                </a>
+              </motion.div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* 4. INTERACTIVE ROI & RISK CALCULATOR */}
+        <section className="py-24 bg-[#0A0F1D] relative">
+          <div className="max-w-5xl mx-auto px-6 md:px-12">
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.roi.title}</h2>
+              <p className="text-white/60">{t.roi.subtitle}</p>
+            </motion.div>
+
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+              className="bg-[#131B2E] border border-white/10 rounded-3xl p-2 max-w-md mx-auto flex mb-12"
+            >
+              <button 
+                onClick={() => setRoiMode('trial')}
+                className={`flex-1 py-3 px-4 text-sm font-bold rounded-2xl transition-all ${roiMode === 'trial' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'text-white/50 hover:text-white'}`}
+              >
+                {t.roi.btnTrial}
+              </button>
+              <button 
+                onClick={() => setRoiMode('expert')}
+                className={`flex-1 py-3 px-4 text-sm font-bold rounded-2xl transition-all ${roiMode === 'expert' ? 'bg-[#D4AF37] text-[#0A0F1D]' : 'text-white/50 hover:text-white'}`}
+              >
+                {t.roi.btnExpert}
+              </button>
+            </motion.div>
+
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#131B2E]/50 backdrop-blur-sm min-h-[320px]">
+              <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-center transition-all duration-500" 
+                   style={{ opacity: roiMode === 'trial' ? 1 : 0, transform: `translateX(${roiMode === 'trial' ? '0%' : '-20px'})`, pointerEvents: roiMode === 'trial' ? 'auto' : 'none' }}>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+                  <div className="w-20 h-20 shrink-0 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20">
+                    <AlertTriangle size={36} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-red-400 mb-4">{t.roi.trialTitle}</h3>
+                    <ul className="space-y-2 text-white/70 mb-6 text-sm">
+                      {t.roi.trialList.map((item, i) => (
+                        <li key={i}>• {item}</li>
+                      ))}
+                    </ul>
+                    <div className="text-lg md:text-xl font-bold">{t.roi.trialLoss} <span className="text-red-400">{t.roi.trialLossVal}</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-center transition-all duration-500"
+                   style={{ opacity: roiMode === 'expert' ? 1 : 0, transform: `translateX(${roiMode === 'expert' ? '0%' : '20px'})`, pointerEvents: roiMode === 'expert' ? 'auto' : 'none' }}>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+                  <div className="w-20 h-20 shrink-0 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                    <ShieldCheck size={36} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-[#D4AF37] mb-4">{t.roi.expertTitle}</h3>
+                    <ul className="space-y-2 text-white/70 mb-6 text-sm">
+                      {t.roi.expertList.map((item, i) => (
+                        <li key={i}>• {item}</li>
+                      ))}
+                    </ul>
+                    <div className="text-lg md:text-xl font-bold">{t.roi.expertInvest} <span className="text-[#D4AF37]">{t.roi.expertInvestVal}</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. WHY LUKAS ZAMRZLA (Track Record & Timeline) */}
+        <section id="why-me" className="py-24 bg-[#0A0F1D] relative border-t border-white/5">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+              className="mb-16"
+            >
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">{t.whyMe.title}</h2>
+              <div className="w-24 h-1 bg-[#D4AF37] rounded-full"></div>
+            </motion.div>
+
+            <div className="grid lg:grid-cols-2 gap-16">
+              
+              {/* Left Column: Summary */}
+              <motion.div 
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="space-y-8"
+              >
+                <p className="text-lg text-white/80 leading-relaxed">
+                  {t.whyMe.desc}
+                </p>
+                
+                <ul className="space-y-6">
+                  <li className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]">
+                      <Globe size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">{t.whyMe.p1Title}</h4>
+                      <p className="text-sm text-white/60">{t.whyMe.p1Desc}</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]">
+                      <Building2 size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">{t.whyMe.p2Title}</h4>
+                      <p className="text-sm text-white/60">{t.whyMe.p2Desc}</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]">
+                      <Award size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">{t.whyMe.p3Title}</h4>
+                      <p className="text-sm text-white/60">{t.whyMe.p3Desc}</p>
+                    </div>
+                  </li>
+                </ul>
+              </motion.div>
+
+              {/* Right Column: Interactive Timeline */}
+              <motion.div 
+                id="experience"
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
+                className="relative pl-8 md:pl-0"
+              >
+                {/* Vertical Timeline Line */}
+                <div className="absolute left-[7px] md:left-[27px] top-2 bottom-2 w-px bg-white/10"></div>
+                
+                <div className="space-y-12">
+                  <motion.div variants={fadeUp} className="relative md:pl-16">
+                    <div className="absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-[#D4AF37] ring-4 ring-[#0A0F1D]"></div>
+                    <div className="text-sm font-bold text-[#D4AF37] mb-1">{t.whyMe.time1Date}</div>
+                    <h4 className="text-xl font-bold mb-1">{t.whyMe.time1Title}</h4>
+                    <div className="text-sm text-white/50 mb-3">{t.whyMe.time1Org}</div>
+                    <p className="text-sm text-white/70">{t.whyMe.time1Desc}</p>
+                  </motion.div>
+
+                  <motion.div variants={fadeUp} className="relative md:pl-16">
+                    <div className="absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-white/20 ring-4 ring-[#0A0F1D]"></div>
+                    <div className="text-sm font-bold text-white/40 mb-1">{t.whyMe.time2Date}</div>
+                    <h4 className="text-xl font-bold mb-1">{t.whyMe.time2Title}</h4>
+                    <div className="text-sm text-white/50 mb-3">{t.whyMe.time2Org}</div>
+                    <p className="text-sm text-white/70">{t.whyMe.time2Desc}</p>
+                  </motion.div>
+
+                  <motion.div variants={fadeUp} className="relative md:pl-16">
+                    <div className="absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-white/20 ring-4 ring-[#0A0F1D]"></div>
+                    <div className="text-sm font-bold text-white/40 mb-1">{t.whyMe.time3Date}</div>
+                    <h4 className="text-xl font-bold mb-1">{t.whyMe.time3Title}</h4>
+                    <div className="text-sm text-white/50 mb-3">{t.whyMe.time3Org}</div>
+                    <p className="text-sm text-white/70">{t.whyMe.time3Desc}</p>
+                  </motion.div>
+                  
+                  <motion.div variants={fadeUp} className="relative md:pl-16 pt-2">
+                    <div className="absolute left-[-21px] md:left-[23px] top-5 w-2.5 h-2.5 rounded-full bg-[#10B981] ring-4 ring-[#0A0F1D]"></div>
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                      <div className="flex items-start gap-3">
+                        <FileCheck2 className="text-[#10B981] shrink-0 mt-1" size={20} />
+                        <div>
+                          <h4 className="font-bold mb-1">{t.whyMe.eduTitle}</h4>
+                          <p className="text-xs text-white/60">{t.whyMe.eduDesc}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* 6. FOOTER & CONTACT */}
+        <section id="contact" className="py-24 bg-[#131B2E] border-t border-[#D4AF37]/20 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0A0F1D]"></div>
+          
+          <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-16">
+              
+              <div>
+                <h2 className="text-4xl font-bold mb-4">{t.contact.title}</h2>
+                <p className="text-white/60 mb-12">{t.contact.desc}</p>
+                
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]">
+                      <Phone size={20} />
+                    </div>
+                    <div>
+                      <div className="text-sm text-white/50">WhatsApp / Direct</div>
+                      <a href="tel:+971502309663" className="text-lg font-bold hover:text-[#D4AF37] transition-colors">+971 50 230 9663</a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]">
+                      <Mail size={20} />
+                    </div>
+                    <div>
+                      <div className="text-sm text-white/50">Email</div>
+                      <a href="mailto:lukas.zamrzla@gmail.com" className="text-lg font-bold hover:text-[#D4AF37] transition-colors">lukas.zamrzla@gmail.com</a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <div className="text-sm text-white/50">Location</div>
+                      <div className="text-lg font-bold">Abu Dhabi, United Arab Emirates</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Inquiry Form */}
+              <div className="bg-[#0A0F1D]/80 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl">
+                <h3 className="text-2xl font-bold mb-6">{t.contact.formTitle}</h3>
+                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.name}</label>
+                      <input type="text" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.company}</label>
+                      <input type="text" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.website}</label>
+                    <input type="text" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.interest}</label>
+                    <select className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors appearance-none">
+                      <option>{t.contact.opt1}</option>
+                      <option>{t.contact.opt2}</option>
+                      <option>{t.contact.opt3}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.msg}</label>
+                    <textarea rows="3" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors resize-none"></textarea>
+                  </div>
+                  <button className="w-full bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-4 rounded-xl transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] mt-4">
+                    {t.contact.submit}
+                  </button>
+                </form>
+              </div>
+
+            </div>
+            
+            {/* Bottom Copyright Bar */}
+            <div className="mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-1">
+                <span className="text-xl font-bold tracking-widest text-white/50">LUKAS ZAMRZLA</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/50 mb-1"></span>
+              </div>
+              <div className="text-sm text-white/40">
+                © {new Date().getFullYear()} Lukas Zamrzla. All rights reserved.
+              </div>
+              <div className="flex gap-4">
+                <a href="https://linkedin.com/in/zamrzla" target="_blank" rel="noreferrer" className="text-white/40 hover:text-[#D4AF37] transition-colors text-sm font-medium">LinkedIn</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  );
+}
