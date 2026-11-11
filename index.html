@@ -686,24 +686,24 @@
                   {/* Form */}
                   <div className="bg-[#0A0F1D]/80 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl">
                     <h3 className="text-2xl font-bold mb-6">{t.contact.formTitle}</h3>
-                    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                    <form action="https://formspree.io/f/xgakekjv" method="POST" className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.name}</label>
-                          <input type="text" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+                          <input type="text" name="name" required className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.company}</label>
-                          <input type="text" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+                          <input type="text" name="company" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
                         </div>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.website}</label>
-                        <input type="text" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+                        <input type="text" name="website" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.interest}</label>
-                        <select className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors">
+                        <select name="interest" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors">
                           <option>{t.contact.opt1}</option>
                           <option>{t.contact.opt2}</option>
                           <option>{t.contact.opt3}</option>
@@ -711,9 +711,9 @@
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.msg}</label>
-                        <textarea rows="3" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors resize-none"></textarea>
+                        <textarea name="message" rows="3" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors resize-none"></textarea>
                       </div>
-                      <button className="w-full bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-4 rounded-xl transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] mt-4">
+                      <button type="submit" className="w-full bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-4 rounded-xl transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] mt-4">
                         {t.contact.submit}
                       </button>
                     </form>
