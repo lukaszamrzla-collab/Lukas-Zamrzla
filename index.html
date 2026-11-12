@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
   <!-- Preload hero portrait immediately -->
-  <link rel="preload" as="image" href="Lukas.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="Lukasweb.jpg" fetchpriority="high">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -410,7 +410,7 @@
                       onError: (e) => {
                         if (!e.currentTarget.dataset.fallback) {
                           e.currentTarget.dataset.fallback = '1';
-                          e.currentTarget.src = 'Lukas.png';
+                          e.currentTarget.src = 'Lukasweb.jpg';
                         }
                       },
                       className: 'w-full h-[450px] sm:h-[550px] lg:h-[600px] object-cover rounded-2xl border border-white/10 shadow-2xl grayscale-[15%] contrast-125 bg-[#131B2E]'
