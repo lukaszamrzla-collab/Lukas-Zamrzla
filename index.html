@@ -4,8 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lukas Zamrzla | GCC Commercial Advisor & GTM Strategist</title>
-  
-  <!-- Tailwind CSS CDN -->
+
+  <!-- Preconnect to CDNs for faster mobile handshake -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- Preload hero portrait immediately -->
+  <link rel="preload" as="image" href="Lukas.webp" fetchpriority="high">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -21,819 +28,790 @@
           }
         }
       }
-    }
+    };
   </script>
 
-  <!-- React & ReactDOM CDN -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- Babel Standalone (pro zpracování JSX v prohlížeči) -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Fast, pinned React 18 via jsDelivr (no 2.5MB Babel compiler needed) -->
+  <script defer crossorigin src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+  <script defer crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 </head>
 <body class="bg-[#0A0F1D] text-white font-sans selection:bg-[#D4AF37] selection:text-[#0A0F1D] overflow-x-hidden">
   <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      const { useState, useEffect, createElement: h } = React;
 
-    // --- TRANSLATIONS DICTIONARY ---
-    const dict = {
-      en: {
-        nav: { services: "Services", whyMe: "Why Lukas", experience: "Track Record", contact: "Contact", bookBtn: "Book Consultation (500 AED)" },
-        hero: {
-          badge: "Former Commercial Diplomat in GCC | UAE Market Entry Specialist",
-          title1: "Opening doors for your products in the ",
-          titleHighlight: "Emirates",
-          title2: " & Middle East.",
-          subtitle: "Strategic market research, regulatory navigation, and elite commercial access across the Middle East. Backed by 11 years in the UAE, I offer broad cross-industry networks with deep specialty in F&B, serving as a trusted bridge for European exporters entering the GCC, as well as Middle East partners seeking high-level connections in the Czech Republic.",
-          btnPrimary: "Explore Market Analysis",
-          btnSecondary: "Personal Consultation (500 AED)",
-          stat1: "11 Years", stat1Sub: "Commercial expertise in the Middle East",
-          stat2: "50+", stat2Sub: "Brands successfully launched in GCC",
-          stat3: "150M+ AED", stat3Sub: "Generated trade & project value"
-        },
-        services: {
-          title: "Services & UAE Entry Strategy",
-          subtitle: "Clear structured deliverables with no hidden fees and no risk. Accurate data for executive decisions.",
-          badge: "Most popular",
-          card1Title: "Market & Strategic Report",
-          card1Price: "5,000 AED",
-          card1List: [
-            "Detailed mapping of retail market (Carrefour, LuLu, Spinneys, Waitrose, etc.).",
-            "Competitor analysis & on-the-shelf price benchmarking in UAE.",
-            "Recommended Go-To-Market model (direct supply, distributor, HoReCa).",
-            "Identification of hidden risks (listing fees, slotting charges, logistical traps).",
-            "Legislative overview, Halal certifications, and chain requirements.",
-            "ROI evaluation of trade shows (Gulfood, ISM) & personal experiences from each."
-          ],
-          card1Bonus: "Bonus included:", card1BonusText: "Free 1-hour post-report strategy review to walk through findings.",
-          card1Btn: "Purchase Strategy Report",
-          card2Title: "Strategic Consultation",
-          card2Price: "500 AED", card2PriceSub: "/ hour",
-          card2Desc: "Initial 1-on-1 consultation to assess your product's potential, legislative queries, and market readiness before major commitments.",
-          card2Guarantee: "Credit Provision:", card2GuaranteeText: "100% of this fee (500 AED) is credited toward the final report cost if purchased.",
-          card2Btn: "Book a Session",
-          card3Title: "Business Development",
-          card3Price: "Bespoke Commercial Representation",
-          card3Desc: "Active representation and negotiations, commercial terms alignment, exhibitions and national pavilion building, and exclusive GCC trade show access.",
-          card3List: ["Short-term and Long-term commercial representation", "Logistics & customs clearance advisory", "Private networking & buyer access"],
-          card3Btn: "Request Custom Quote"
-        },
-        roi: {
-          title: "Why does the 5,000 AED report make sense?",
-          subtitle: "Compare the cost of independent research versus strategic data investment.",
-          btnTrial: "Trial & Error Journey", btnExpert: "With Me",
-          trialTitle: "Independent Trip to Dubai",
-          trialList: [
-            "Flights and 1-week accommodation: ~8,000 AED",
-            "Ineffective meetings with the wrong buyers or middle-men",
-            "Hidden listing and marketing fees, not enough time to visit all.",
-            "Connected cost to business trip, meals, transportation and meetings ~2,000 AED"
-          ],
-          trialLoss: "Estimated loss: ", trialLossVal: "Minimum 10,000+ AED",
-          expertTitle: "Strategic Preparation",
-          expertList: [
-            "Complete market data on your desk without traveling",
-            "List of relevant distributors, retail chains and strategy",
-            "Advance knowledge of current legislative requirements",
-            "Leveraging local network and experience"
-          ],
-          expertInvest: "Your investment: ", expertInvestVal: "5,000 AED (Zero lost time & capital)"
-        },
-        whyMe: {
-          title: "Why entrust your expansion to me?",
-          desc: "I represent the interests of European companies in the Middle East as well as interests of local partners in the Czech Republic. I combine the negotiating power gained during 7 years of economic diplomacy with the hard business approach of the corporate environment with 13 years senior experience.",
-          p1Title: "Diplomatic Reach", p1Desc: "7 years as Regional Commercial & Agricultural Director at the Embassy of the Czech Republic in Abu Dhabi (2019–2026).",
-          p2Title: "C-Level Network", p2Desc: "Established network of buyers, owners, and directors of major retail chains, distributors, companies and ministries in the UAE and GCC.",
-          p3Title: "Trade Show Dominance", p3Desc: "Experience building national pavilions and securing participation including sold-out trade shows accross GCC.",
-          time1Date: "2019–2026", time1Title: "Regional Commercial & Agricultural Director", time1Org: "Embassy of the Czech Republic, Abu Dhabi", time1Desc: "Managed projects with 2M+ AED budgets. Facilitated successful entry for 50+ international F&B and agricultural companies into the GCC.",
-          time2Date: "2017–2019", time2Title: "Manager Key Accounts", time2Org: "Booking.com B.V., Prague", time2Desc: "Managed the most profitable portfolio and global hotel chains (Marriott, Accor, IHG) generating over 20M AED monthly.",
-          time3Date: "2013–2017", time3Title: "Sales Manager positions", time3Org: "Preciosa Lighting, Dubai and MixologyArt, Dubai", time3Desc: "Delivered bespoke luxury lighting projects across the UAE and build hospitality platform for Food and Beverage partners including trainings and events.",
-          eduTitle: "Master of International Business (MIB)", eduDesc: "With Distinction/Honors. HULT International Business School (Dubai, New York & Boston)."
-        },
-        contact: {
-          title: "Start your expansion today.",
-          desc: "Book a consultation or order a market analysis right away. Gain certainty for your investment decisions.",
-          formTitle: "Inquiry Form",
-          name: "Full Name", company: "Company", website: "Website / Product", interest: "I am interested in:",
-          opt1: "1. Strategic Consultation (500 AED)", opt2: "2. Complete Market Report (5,000 AED)", opt3: "3. Bespoke Representation",
-          msg: "Message (Optional)", submit: "Submit Inquiry",
-          submitting: "Sending...",
-          successTitle: "Inquiry Sent Successfully!",
-          successMsg: "Thank you for reaching out. I have received your message and will get back to you shortly.",
-          errorMsg: "There was an issue submitting your inquiry. Please try again or contact me directly via WhatsApp or Email.",
-          closeBtn: "Close"
-        }
-      },
-      cs: {
-        nav: { services: "Služby", whyMe: "Proč Lukas", experience: "Zkušenosti", contact: "Kontakt", bookBtn: "Konzultace (500 AED)" },
-        hero: {
-          badge: "Bývalý obchodní diplomat v GCC | SAE Market Entry Specialist",
-          title1: "Otevřete svému produktu dveře v ",
-          titleHighlight: "Emirátech",
-          title2: " a GCC.",
-          subtitle: "Strategický průzkum trhu, překonání legislativních překážek a prémiové obchodní kontakty napříč Blízkým východem. S know-how za 11 let v SAE nabízím rozsáhlou síť v mnoha odvětvích s hlavním zaměřením na F&B – působím jako spolehlivý most jak pro evropské firmy vstupující do Emirátů, tak pro blízkovýchodní partnery hledající silné kontakty na nejvyšší úrovni v České republice.",
-          btnPrimary: "Prozkoumat balíček tržní analýzy",
-          btnSecondary: "Osobní konzultace (500 AED)",
-          stat1: "11 let", stat1Sub: "Obchodních zkušeností na Blízkém východě",
-          stat2: "50+", stat2Sub: "Úspěšně zavedených značek na trhu GCC",
-          stat3: "150M+ AED", stat3Sub: "Hodnota realizovaného obchodu a projektů"
-        },
-        services: {
-          title: "Služby & Vstupní strategie do SAE",
-          subtitle: "Jasné strukturované výstupy bez skrytých poplatků a bez rizika. Přesná data pro vaše exekutivní rozhodnutí.",
-          badge: "Nejoblíbenější pro CZ/SK firmy",
-          card1Title: "Tržní & Strategický Report",
-          card1Price: "5 000 AED",
-          card1List: [
-            "Detailní mapování obchodního trhu (Carrefour, LuLu, Spinneys, Waitrose atd.).",
-            "Analýza konkurence a cenový benchmarking přímo z pultů v SAE.",
-            "Doporučený Go-To-Market model (přímý dodavatel, exkluzivní distributor, HoReCa).",
-            "Identifikace skrytých rizik (zalistovací poplatky, rabaty, logistické pasti).",
-            "Přehled legislativy, Halal certifikace a požadavky řetězců.",
-            "Vyhodnocení ROI veletrhů a osobní zkušenosti z většiny akcí v regionu."
-          ],
-          card1Bonus: "Bonus v ceně:", card1BonusText: "Zdarma 1 hodina post-report konzultace k procházení výstupů.",
-          card1Btn: "Objednat Report",
-          card2Title: "Strategická Konzultace",
-          card2Price: "500 AED", card2PriceSub: "/ hod",
-          card2Desc: "Vstupní 1-on-1 konzultace pro posouzení potenciálu vašeho produktu, legislativních dotazů a připravenosti pro trh před zahájením větších kroků.",
-          card2Guarantee: "Garance vrácení:", card2GuaranteeText: "100% částky se v případě objednání plného reportu odečítá z výsledné ceny.",
-          card2Btn: "Rezervovat Termín",
-          card3Title: "Business Development",
-          card3Price: "Obchodná zastupování na míru",
-          card3Desc: "Aktivní zastupování firmy včetně jednáních s nákupčími, vyjednávání komerčních podmínek, zajištění účasti na veletrhu, budování národních expozic a exkluzivní vstup na vyprodané veletrhy v GCC.",
-          card3List: ["Krátkodobé i dlouhodobé obchodní zastoupení", "Řešení logistiky a celního řízení", "Privátní networkingové akce a propojení s relevantními kontakty"],
-          card3Btn: "Poptat na míru"
-        },
-        roi: {
-          title: "Proč dává report za 5 000 AED smysl?",
-          subtitle: "Porovnejte si náklady na vlastní průzkum s investicí do strategických dat.",
-          btnTrial: "Cesta pokus-omyl", btnExpert: "Se mnou",
-          trialTitle: "Vyslání zaměstnance do Dubaje",
-          trialList: [
-            "Letenky a ubytování na týden: ~8 000 AED",
-            "Neefektivní schůzky s nesprávnými nákupčími či překupníky",
-            "Skryté zalistovací poplatky, nejasné informace a krátká doba služební cesty",
-            "Další náklady na cestu jako diety, doprava, náklady během schůzek: ~2 000 AED"
-          ],
-          trialLoss: "Odhadovaná ztráta: ", trialLossVal: "Minimálně 10 000+ AED",
-          expertTitle: "Strategická příprava",
-          expertList: [
-            "Kompletní tržní data na vašem stole bez nutnosti cestovat",
-            "Seznam prověřených a správných distributorů včetně strategie jak na ně",
-            "Znalost aktuálních legislativních požadavků předem",
-            "Kvalitní výstup díky místním dlouholetým zkušenostem a obchodním kontaktům"
-          ],
-          expertInvest: "Vaše investice: ", expertInvestVal: "5 000 AED (Nula ztraceného času a kapitálu)"
-        },
-        whyMe: {
-          title: "Proč svěřit expanzi právě mně?",
-          desc: "Zastupuji zájmy evropských firem v regionu Blízkého východu. Kombinuji vyjednávací sílu nabytou během 7 let v ekonomické diplomacii s tvrdým byznysovým přístupem korporátního prostředí.",
-          p1Title: "Diplomatický dosah", p1Desc: "7 let působení jako regionální obchodní a zemědělský diplomat Velvyslanectví ČR v Abú Dhabí (2019–2026).",
-          p2Title: "Síť na nejvyšší úrovni", p2Desc: "Vybudovaná síť kontaktů na nákupčí, majitele a ředitelství hlavních maloobchodních řetězců a distributorů v SAE a GCC.",
-          p3Title: "Dominance na veletrzích", p3Desc: "Zkušenosti s budováním národních pavilonů a schopnost zprostředkovat účast na vyprodaných veletrzích s dlouhými waiting-listy.",
-          time1Date: "2019–2026", time1Title: "Regional Commercial & Agricultural Director", time1Org: "Embassy of the Czech Republic, Abu Dhabi", time1Desc: "Řízení projektů s rozpočty 2M+ AED. Zprostředkování úspěšného vstupu pro více než 50 mezinárodních F&B a zemědělských firem do regionu GCC.",
-          time2Date: "2017–2019", time2Title: "Manager Key Accounts", time2Org: "Booking.com B.V., Prague", time2Desc: "Vedení nejziskovějšího portfolia a globálních hotelových řetězců (Marriott, Accor, IHG) s generováním přes 20M AED měsíčně.",
-          time3Date: "2013–2017", time3Title: "Obchodní pozice", time3Org: "Preciosa Lighting, Dubai a MixologyArt, Dubai", time3Desc: "Dodávky luxusních projektů na míru a budování konzultační firmy v oblasti pohostinství.",
-          eduTitle: "Master of International Business (MIB)", eduDesc: "S vyznamenáním. HULT International Business School (Dubai, New York a Boston)."
-        },
-        contact: {
-          title: "Zahajte expanzi ještě dnes.",
-          desc: "Rezervujte si konzultaci nebo rovnou objednejte analýzu trhu. Získejte jistotu pro svá investiční rozhodnutí.",
-          formTitle: "Poptávkový formulář",
-          name: "Jméno a Příjmení", company: "Společnost", website: "Webové stránky / Produkt", interest: "Mám zájem o:",
-          opt1: "1. Strategická Konzultace (500 AED)", opt2: "2. Kompletní Tržní Report (5 000 AED)", opt3: "3. Individuální zastoupení",
-          msg: "Zpráva (volitelné)", submit: "Odeslat poptávku",
-          submitting: "Odesílání...",
-          successTitle: "Poptávka byla úspěšně odeslána!",
-          successMsg: "Děkuji za vaši zprávu. Zprávu jsem obdržel a brzy se vám ozvu zpět.",
-          errorMsg: "Při odesílání poptávky došlo k chybě. Zkuste to prosím znovu nebo mě kontaktujte přímo přes WhatsApp či Email.",
-          closeBtn: "Zavřít"
-        }
-      }
-    };
-
-    function App() {
-      const [isScrolled, setIsScrolled] = useState(false);
-      const [roiMode, setRoiMode] = useState('expert');
-      const [lang, setLang] = useState('en');
-      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-      const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
-
-      const t = dict[lang];
-
-      useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 50);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-      }, []);
-
-      useEffect(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      }, [lang, mobileMenuOpen, roiMode, formStatus]);
-
-      const handleFormSubmit = async (e) => {
-        e.preventDefault();
-        setFormStatus('submitting');
-        
-        const form = e.target;
-        const formData = new FormData(form);
-
-        try {
-          const response = await fetch("https://formspree.io/f/xgakekjv", {
-            method: "POST",
-            body: formData,
-            headers: {
-              'Accept': 'application/json'
-            }
-          });
-
-          if (response.ok) {
-            setFormStatus('success');
-            form.reset();
-          } else {
-            setFormStatus('error');
+      // --- TRANSLATIONS DICTIONARY (Easily editable) ---
+      const dict = {
+        en: {
+          nav: { services: "Services", whyMe: "Why Lukas", experience: "Track Record", contact: "Contact", bookBtn: "Book Consultation (500 AED)" },
+          hero: {
+            badge: "Former Commercial Diplomat in GCC | UAE Market Entry Specialist",
+            title1: "Opening doors for your products in the ",
+            titleHighlight: "Emirates",
+            title2: " & Middle East.",
+            subtitle: "Strategic market research, regulatory navigation, and elite commercial access across the Middle East. Backed by 11 years in the UAE, I offer broad cross-industry networks with deep specialty in F&B, serving as a trusted bridge for European exporters entering the GCC, as well as Middle East partners seeking high-level connections in the Czech Republic.",
+            btnPrimary: "Explore Market Analysis",
+            btnSecondary: "Personal Consultation (500 AED)",
+            stat1: "11 Years", stat1Sub: "Commercial expertise in the Middle East",
+            stat2: "50+", stat2Sub: "Brands successfully launched in GCC",
+            stat3: "150M+ AED", stat3Sub: "Generated trade & project value"
+          },
+          services: {
+            title: "Services & UAE Entry Strategy",
+            subtitle: "Clear structured deliverables with no hidden fees and no risk. Accurate data for executive decisions.",
+            badge: "Most popular",
+            card1Title: "Market & Strategic Report",
+            card1Price: "5,000 AED",
+            card1List: [
+              "Detailed mapping of retail market (Carrefour, LuLu, Spinneys, Waitrose, etc.).",
+              "Competitor analysis & on-the-shelf price benchmarking in UAE.",
+              "Recommended Go-To-Market model (direct supply, distributor, HoReCa).",
+              "Identification of hidden risks (listing fees, slotting charges, logistical traps).",
+              "Legislative overview, Halal certifications, and chain requirements.",
+              "ROI evaluation of trade shows (Gulfood, ISM) & personal experiences from each."
+            ],
+            card1Bonus: "Bonus included:", card1BonusText: "Free 1-hour post-report strategy review to walk through findings.",
+            card1Btn: "Purchase Strategy Report",
+            card2Title: "Strategic Consultation",
+            card2Price: "500 AED", card2PriceSub: "/ hour",
+            card2Desc: "Initial 1-on-1 consultation to assess your product's potential, legislative queries, and market readiness before major commitments.",
+            card2Guarantee: "Credit Provision:", card2GuaranteeText: "100% of this fee (500 AED) is credited toward the final report cost if purchased.",
+            card2Btn: "Book a Session",
+            card3Title: "Business Development",
+            card3Price: "Bespoke Commercial Representation",
+            card3Desc: "Active representation and negotiations, commercial terms alignment, exhibitions and national pavilion building, and exclusive GCC trade show access.",
+            card3List: ["Short-term and Long-term commercial representation", "Logistics & customs clearance advisory", "Private networking & buyer access"],
+            card3Btn: "Request Custom Quote"
+          },
+          roi: {
+            title: "Why does the 5,000 AED report make sense?",
+            subtitle: "Compare the cost of independent research versus strategic data investment.",
+            btnTrial: "Trial & Error Journey", btnExpert: "With Me",
+            trialTitle: "Independent Trip to Dubai",
+            trialList: [
+              "Flights and 1-week accommodation: ~8,000 AED",
+              "Ineffective meetings with the wrong buyers or middle-men",
+              "Hidden listing and marketing fees, not enough time to visit all.",
+              "Connected cost to business trip, meals, transportation and meetings ~2,000 AED"
+            ],
+            trialLoss: "Estimated loss: ", trialLossVal: "Minimum 10,000+ AED",
+            expertTitle: "Strategic Preparation",
+            expertList: [
+              "Complete market data on your desk without traveling",
+              "List of relevant distributors, retail chains and strategy",
+              "Advance knowledge of current legislative requirements",
+              "Leveraging local network and experience"
+            ],
+            expertInvest: "Your investment: ", expertInvestVal: "5,000 AED (Zero lost time & capital)"
+          },
+          whyMe: {
+            title: "Why entrust your expansion to me?",
+            desc: "I represent the interests of European companies in the Middle East as well as interests of local partners in the Czech Republic. I combine the negotiating power gained during 7 years of economic diplomacy with the hard business approach of the corporate environment with 13 years senior experience.",
+            p1Title: "Diplomatic Reach", p1Desc: "7 years as Regional Commercial & Agricultural Director at the Embassy of the Czech Republic in Abu Dhabi (2019–2026).",
+            p2Title: "C-Level Network", p2Desc: "Established network of buyers, owners, and directors of major retail chains, distributors, companies and ministries in the UAE and GCC.",
+            p3Title: "Trade Show Dominance", p3Desc: "Experience building national pavilions and securing participation including sold-out trade shows across GCC.",
+            time1Date: "2019–2026", time1Title: "Regional Commercial & Agricultural Director", time1Org: "Embassy of the Czech Republic, Abu Dhabi", time1Desc: "Managed projects with 2M+ AED budgets. Facilitated successful entry for 50+ international F&B and agricultural companies into the GCC.",
+            time2Date: "2017–2019", time2Title: "Manager Key Accounts", time2Org: "Booking.com B.V., Prague", time2Desc: "Managed the most profitable portfolio and global hotel chains (Marriott, Accor, IHG) generating over 20M AED monthly.",
+            time3Date: "2013–2017", time3Title: "Sales Manager positions", time3Org: "Preciosa Lighting, Dubai and MixologyArt, Dubai", time3Desc: "Delivered bespoke luxury lighting projects across the UAE and built hospitality platform for Food and Beverage partners including trainings and events.",
+            eduTitle: "Master of International Business (MIB)", eduDesc: "With Distinction/Honors. HULT International Business School (Dubai, New York & Boston)."
+          },
+          contact: {
+            title: "Start your expansion today.",
+            desc: "Book a consultation or order a market analysis right away. Gain certainty for your investment decisions.",
+            formTitle: "Inquiry Form",
+            name: "Full Name", company: "Company", website: "Website / Product", interest: "I am interested in:",
+            opt1: "1. Strategic Consultation (500 AED)", opt2: "2. Complete Market Report (5,000 AED)", opt3: "3. Bespoke Representation",
+            msg: "Message (Optional)", submit: "Submit Inquiry",
+            submitting: "Sending...",
+            successTitle: "Inquiry Sent Successfully!",
+            successMsg: "Thank you for reaching out. I have received your message and will get back to you shortly.",
+            errorMsg: "There was an issue submitting your inquiry. Please try again or contact me directly via WhatsApp or Email.",
+            closeBtn: "Close"
           }
-        } catch (error) {
-          setFormStatus('error');
+        },
+        cs: {
+          nav: { services: "Služby", whyMe: "Proč Lukas", experience: "Zkušenosti", contact: "Kontakt", bookBtn: "Konzultace (500 AED)" },
+          hero: {
+            badge: "Bývalý obchodní diplomat v GCC | SAE Market Entry Specialist",
+            title1: "Otevřete svému produktu dveře v ",
+            titleHighlight: "Emirátech",
+            title2: " a GCC.",
+            subtitle: "Strategický průzkum trhu, překonání legislativních překážek a prémiové obchodní kontakty napříč Blízkým východem. S know-how za 11 let v SAE nabízím rozsáhlou síť v mnoha odvětvích s hlavním zaměřením na F&B – působím jako spolehlivý most jak pro evropské firmy vstupující do Emirátů, tak pro blízkovýchodní partnery hledající silné kontakty na nejvyšší úrovni v České republice.",
+            btnPrimary: "Prozkoumat balíček tržní analýzy",
+            btnSecondary: "Osobní konzultace (500 AED)",
+            stat1: "11 let", stat1Sub: "Obchodních zkušeností na Blízkém východě",
+            stat2: "50+", stat2Sub: "Úspěšně zavedených značek na trhu GCC",
+            stat3: "150M+ AED", stat3Sub: "Hodnota realizovaného obchodu a projektů"
+          },
+          services: {
+            title: "Služby & Vstupní strategie do SAE",
+            subtitle: "Jasné strukturované výstupy bez skrytých poplatků a bez rizika. Přesná data pro vaše exekutivní rozhodnutí.",
+            badge: "Nejoblíbenější pro CZ/SK firmy",
+            card1Title: "Tržní & Strategický Report",
+            card1Price: "5 000 AED",
+            card1List: [
+              "Detailní mapování obchodního trhu (Carrefour, LuLu, Spinneys, Waitrose atd.).",
+              "Analýza konkurence a cenový benchmarking přímo z pultů v SAE.",
+              "Doporučený Go-To-Market model (přímý dodavatel, exkluzivní distributor, HoReCa).",
+              "Identifikace skrytých rizik (zalistovací poplatky, rabaty, logistické pasti).",
+              "Přehled legislativy, Halal certifikace a požadavky řetězců.",
+              "Vyhodnocení ROI veletrhů a osobní zkušenosti z většiny akcí v regionu."
+            ],
+            card1Bonus: "Bonus v ceně:", card1BonusText: "Zdarma 1 hodina post-report konzultace k procházení výstupů.",
+            card1Btn: "Objednat Report",
+            card2Title: "Strategická Konzultace",
+            card2Price: "500 AED", card2PriceSub: "/ hod",
+            card2Desc: "Vstupní 1-on-1 konzultace pro posouzení potenciálu vašeho produktu, legislativních dotazů a připravenosti pro trh před zahájením větších kroků.",
+            card2Guarantee: "Garance vrácení:", card2GuaranteeText: "100% částky se v případě objednání plného reportu odečítá z výsledné ceny.",
+            card2Btn: "Rezervovat Termín",
+            card3Title: "Business Development",
+            card3Price: "Obchodní zastupování na míru",
+            card3Desc: "Aktivní zastupování firmy včetně jednání s nákupčími, vyjednávání komerčních podmínek, zajištění účasti na veletrhu, budování národních expozic a exkluzivní vstup na vyprodané veletrhy v GCC.",
+            card3List: ["Krátkodobé i dlouhodobé obchodní zastoupení", "Řešení logistiky a celního řízení", "Privátní networkingové akce a propojení s relevantními kontakty"],
+            card3Btn: "Poptat na míru"
+          },
+          roi: {
+            title: "Proč dává report za 5 000 AED smysl?",
+            subtitle: "Porovnejte si náklady na vlastní průzkum s investicí do strategických dat.",
+            btnTrial: "Cesta pokus-omyl", btnExpert: "Se mnou",
+            trialTitle: "Vyslání zaměstnance do Dubaje",
+            trialList: [
+              "Letenky a ubytování na týden: ~8 000 AED",
+              "Neefektivní schůzky s nesprávnými nákupčími či překupníky",
+              "Skryté zalistovací poplatky, nejasné informace a krátká doba služební cesty",
+              "Další náklady na cestu jako diety, doprava, náklady během schůzek: ~2 000 AED"
+            ],
+            trialLoss: "Odhadovaná ztráta: ", trialLossVal: "Minimálně 10 000+ AED",
+            expertTitle: "Strategická příprava",
+            expertList: [
+              "Kompletní tržní data na vašem stole bez nutnosti cestovat",
+              "Seznam prověřených a správných distributorů včetně strategie jak na ně",
+              "Znalost aktuálních legislativních požadavků předem",
+              "Kvalitní výstup díky místním dlouholetým zkušenostem a obchodním kontaktům"
+            ],
+            expertInvest: "Vaše investice: ", expertInvestVal: "5 000 AED (Nula ztraceného času a kapitálu)"
+          },
+          whyMe: {
+            title: "Proč svěřit expanzi právě mně?",
+            desc: "Zastupuji zájmy evropských firem v regionu Blízkého východu. Kombinuji vyjednávací sílu nabytou během 7 let v ekonomické diplomacii s tvrdým byznysovým přístupem korporátního prostředí.",
+            p1Title: "Diplomatický dosah", p1Desc: "7 let působení jako regionální obchodní a zemědělský diplomat Velvyslanectví ČR v Abú Dhabí (2019–2026).",
+            p2Title: "Síť na nejvyšší úrovni", p2Desc: "Vybudovaná síť kontaktů na nákupčí, majitele a ředitelství hlavních maloobchodních řetězců a distributorů v SAE a GCC.",
+            p3Title: "Dominance na veletrzích", p3Desc: "Zkušenosti s budováním národních pavilonů a schopnost zprostředkovat účast na vyprodaných veletrzích s dlouhými waiting-listy.",
+            time1Date: "2019–2026", time1Title: "Regional Commercial & Agricultural Director", time1Org: "Embassy of the Czech Republic, Abu Dhabi", time1Desc: "Řízení projektů s rozpočty 2M+ AED. Zprostředkování úspěšného vstupu pro více než 50 mezinárodních F&B a zemědělských firem do regionu GCC.",
+            time2Date: "2017–2019", time2Title: "Manager Key Accounts", time2Org: "Booking.com B.V., Prague", time2Desc: "Vedení nejziskovějšího portfolia a globálních hotelových řetězců (Marriott, Accor, IHG) s generováním přes 20M AED měsíčně.",
+            time3Date: "2013–2017", time3Title: "Obchodní pozice", time3Org: "Preciosa Lighting, Dubai a MixologyArt, Dubai", time3Desc: "Dodávky luxusních projektů na míru a budování konzultační firmy v oblasti pohostinství.",
+            eduTitle: "Master of International Business (MIB)", eduDesc: "S vyznamenáním. HULT International Business School (Dubai, New York a Boston)."
+          },
+          contact: {
+            title: "Zahajte expanzi ještě dnes.",
+            desc: "Rezervujte si konzultaci nebo rovnou objednejte analýzu trhu. Získejte jistotu pro svá investiční rozhodnutí.",
+            formTitle: "Poptávkový formulář",
+            name: "Jméno a Příjmení", company: "Společnost", website: "Webové stránky / Produkt", interest: "Mám zájem o:",
+            opt1: "1. Strategická Konzultace (500 AED)", opt2: "2. Kompletní Tržní Report (5 000 AED)", opt3: "3. Individuální zastoupení",
+            msg: "Zpráva (volitelné)", submit: "Odeslat poptávku",
+            submitting: "Odesílání...",
+            successTitle: "Poptávka byla úspěšně odeslána!",
+            successMsg: "Děkuji za vaši zprávu. Zprávu jsem obdržel a brzy se vám ozvu zpět.",
+            errorMsg: "Při odesílání poptávky došlo k chybě. Zkuste to prosím znovu nebo mě kontaktujte přímo přes WhatsApp či Email.",
+            closeBtn: "Zavřít"
+          }
         }
       };
 
-      return (
-        <div className="min-h-screen relative">
-          
-          {/* Ambient Background Glows */}
-          <div className="fixed inset-0 z-0 pointer-events-none">
-            <div className="absolute top-[#10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#D4AF37]/5 blur-[120px]"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#131B2E] blur-[150px]"></div>
-          </div>
+      // --- LIGHTWEIGHT INLINE SVG ICONS (No external unpkg script needed) ---
+      const ICON_PATHS = {
+        'globe-2': [h('circle', { key: 1, cx: 12, cy: 12, r: 10 }), h('path', { key: 2, d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }), h('path', { key: 3, d: 'M2 12h20' })],
+        'x': [h('path', { key: 1, d: 'M18 6 6 18' }), h('path', { key: 2, d: 'm6 6 12 12' })],
+        'menu': [h('line', { key: 1, x1: 4, x2: 20, y1: 12, y2: 12 }), h('line', { key: 2, x1: 4, x2: 20, y1: 6, y2: 6 }), h('line', { key: 3, x1: 4, x2: 20, y1: 18, y2: 18 })],
+        'shield-check': [h('path', { key: 1, d: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z' }), h('path', { key: 2, d: 'm9 12 2 2 4-4' })],
+        'landmark': [h('line', { key: 1, x1: 3, x2: 21, y1: 22, y2: 22 }), h('line', { key: 2, x1: 6, x2: 6, y1: 18, y2: 11 }), h('line', { key: 3, x1: 10, x2: 10, y1: 18, y2: 11 }), h('line', { key: 4, x1: 14, x2: 14, y1: 18, y2: 11 }), h('line', { key: 5, x1: 18, x2: 18, y1: 18, y2: 11 }), h('polygon', { key: 6, points: '12 2 20 7 4 7' })],
+        'building-2': [h('path', { key: 1, d: 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z' }), h('path', { key: 2, d: 'M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2' }), h('path', { key: 3, d: 'M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2' }), h('path', { key: 4, d: 'M10 6h4' }), h('path', { key: 5, d: 'M10 10h4' }), h('path', { key: 6, d: 'M10 14h4' }), h('path', { key: 7, d: 'M10 18h4' })],
+        'trending-up': [h('polyline', { key: 1, points: '22 7 13.5 15.5 8.5 10.5 2 17' }), h('polyline', { key: 2, points: '16 7 22 7 22 13' })],
+        'check-circle': [h('path', { key: 1, d: 'M22 11.08V12a10 10 0 1 1-5.93-9.14' }), h('path', { key: 2, d: 'm9 11 3 3L22 4' })],
+        'chevron-right': [h('path', { key: 1, d: 'm9 18 6-6-6-6' })],
+        'alert-triangle': [h('path', { key: 1, d: 'm21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z' }), h('path', { key: 2, d: 'M12 9v4' }), h('path', { key: 3, d: 'M12 17h.01' })],
+        'globe': [h('circle', { key: 1, cx: 12, cy: 12, r: 10 }), h('path', { key: 2, d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }), h('path', { key: 3, d: 'M2 12h20' })],
+        'award': [h('circle', { key: 1, cx: 12, cy: 8, r: 6 }), h('path', { key: 2, d: 'M15.477 12.89 17 22l-5-3-5 3 1.523-9.11' })],
+        'file-check-2': [h('path', { key: 1, d: 'M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4' }), h('path', { key: 2, d: 'M14 2v4a2 2 0 0 0 2 2h4' }), h('path', { key: 3, d: 'm3 15 2 2 4-4' })],
+        'phone': [h('path', { key: 1, d: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z' })],
+        'mail': [h('rect', { key: 1, width: 20, height: 16, x: 2, y: 4, rx: 2 }), h('path', { key: 2, d: 'm22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7' })],
+        'map-pin': [h('path', { key: 1, d: 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z' }), h('circle', { key: 2, cx: 12, cy: 10, r: 3 })],
+        'check-circle-2': [h('circle', { key: 1, cx: 12, cy: 12, r: 10 }), h('path', { key: 2, d: 'm9 12 2 2 4-4' })],
+        'alert-circle': [h('circle', { key: 1, cx: 12, cy: 12, r: 10 }), h('line', { key: 2, x1: 12, x2: 12, y1: 8, y2: 12 }), h('line', { key: 3, x1: 12, x2: 12.01, y1: 16, y2: 16 })]
+      };
 
-          {/* 1. NAVIGATION BAR */}
-          <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || mobileMenuOpen ? 'bg-[#0A0F1D]/95 backdrop-blur-lg border-b border-white/10 py-4' : 'bg-transparent py-6'}`}>
-            <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-              <a href="#" className="flex items-center gap-1 cursor-pointer">
-                <span className="text-xl font-bold tracking-widest text-white">LUKAS ZAMRZLA</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mb-1"></span>
-              </a>
-              
-              {/* Desktop Links */}
-              <nav className="hidden lg:flex gap-8 items-center text-sm font-medium text-white/70">
-                <a href="#services" className="hover:text-[#D4AF37] transition-colors">{t.nav.services}</a>
-                <a href="#why-me" className="hover:text-[#D4AF37] transition-colors">{t.nav.whyMe}</a>
-                <a href="#experience" className="hover:text-[#D4AF37] transition-colors">{t.nav.experience}</a>
-                <a href="#contact" className="hover:text-[#D4AF37] transition-colors">{t.nav.contact}</a>
-              </nav>
-              
-              {/* Desktop Language Switcher & CTA */}
-              <div className="hidden lg:flex items-center gap-6">
-                <button 
-                  onClick={() => setLang(lang === 'en' ? 'cs' : 'en')}
-                  className="flex items-center gap-2 text-xs font-bold tracking-wider text-white/50 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5 border border-white/10"
-                >
-                  <i data-lucide="globe-2" class={`w-4 h-4 ${lang === 'en' ? 'text-[#D4AF37]' : ''}`}></i>
-                  <span className={lang === 'en' ? 'text-white' : ''}>EN</span>
-                  <span className="text-white/20">|</span>
-                  <span className={lang === 'cs' ? 'text-white' : ''}>CZ</span>
-                </button>
+      function Icon({ name, className }) {
+        return h('svg', {
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 24 24',
+          fill: 'none',
+          stroke: 'currentColor',
+          strokeWidth: 2,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          className: className || 'w-5 h-5',
+          'aria-hidden': 'true'
+        }, ICON_PATHS[name] || null);
+      }
 
-                <a href="#contact" className="flex items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] px-6 py-2.5 rounded-sm font-semibold transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_25px_rgba(212,175,55,0.5)]">
-                  {t.nav.bookBtn}
-                </a>
-              </div>
+      function App() {
+        const [isScrolled, setIsScrolled] = useState(false);
+        const [roiMode, setRoiMode] = useState('expert');
+        const [lang, setLang] = useState('en');
+        const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+        const [formStatus, setFormStatus] = useState('idle');
 
-              {/* Mobile Menu Controls */}
-              <div className="flex items-center gap-3 lg:hidden">
-                <button 
-                  onClick={() => setLang(lang === 'en' ? 'cs' : 'en')}
-                  className="flex items-center gap-1 text-xs font-bold text-[#D4AF37] bg-white/5 border border-white/10 px-2.5 py-1.5 rounded"
-                >
-                  <i data-lucide="globe-2" class="w-3.5 h-3.5"></i>
-                  <span>{lang.toUpperCase()}</span>
-                </button>
+        const t = dict[lang];
 
-                <button 
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="text-white p-2 focus:outline-none"
-                >
-                  <i data-lucide={mobileMenuOpen ? "x" : "menu"} class="w-6 h-6 text-[#D4AF37]"></i>
-                </button>
-              </div>
-            </div>
+        useEffect(() => {
+          const handleScroll = () => setIsScrolled(window.scrollY > 50);
+          window.addEventListener('scroll', handleScroll, { passive: true });
+          return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
 
-            {/* Mobile Dropdown Menu */}
-            {mobileMenuOpen && (
-              <div className="lg:hidden bg-[#0A0F1D] border-b border-white/10 px-6 py-6">
-                <nav className="flex flex-col gap-4 text-base font-medium">
-                  <a href="#services" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-white/5 text-white/80">{t.nav.services}</a>
-                  <a href="#why-me" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-white/5 text-white/80">{t.nav.whyMe}</a>
-                  <a href="#experience" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-white/5 text-white/80">{t.nav.experience}</a>
-                  <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-white/5 text-white/80">{t.nav.contact}</a>
-                  <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="mt-2 text-center bg-[#D4AF37] text-[#0A0F1D] py-3 rounded-sm font-bold">{t.nav.bookBtn}</a>
-                </nav>
-              </div>
-            )}
-          </header>
+        const handleFormSubmit = async (e) => {
+          e.preventDefault();
+          setFormStatus('submitting');
+          const form = e.target;
+          const formData = new FormData(form);
+          try {
+            const response = await fetch("https://formspree.io/f/xgakekjv", {
+              method: "POST",
+              body: formData,
+              headers: { 'Accept': 'application/json' }
+            });
+            if (response.ok) {
+              setFormStatus('success');
+              form.reset();
+            } else {
+              setFormStatus('error');
+            }
+          } catch (error) {
+            setFormStatus('error');
+          }
+        };
 
-          <main className="relative z-10">
-            
-            {/* 2. HERO SECTION */}
-            <section className="min-h-screen flex items-center pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
-              <div className="w-full grid lg:grid-cols-12 gap-12 items-center">
-                
-                {/* Left Column */}
-                <div className="lg:col-span-7 space-y-8">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs md:text-sm font-medium text-[#D4AF37]">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    <span>{t.hero.badge}</span>
-                  </div>
-                  
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                    {t.hero.title1}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB]">{t.hero.titleHighlight}</span>
-                    {t.hero.title2}
-                  </h1>
-                  
-                  <p className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl leading-relaxed">
-                    {t.hero.subtitle}
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                    <a href="#services" className="flex justify-center items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] px-8 py-4 rounded-sm font-bold transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] text-center">
-                      {t.hero.btnPrimary}
-                    </a>
-                    <a href="#contact" className="flex justify-center items-center gap-2 bg-transparent border border-white/20 hover:border-white/50 hover:bg-white/5 text-white px-8 py-4 rounded-sm font-bold transition-all text-center">
-                      {t.hero.btnSecondary}
-                    </a>
-                  </div>
-                </div>
+        return h('div', { className: 'min-h-screen relative' },
 
-                {/* Right Column (Photo & Floating Badges) */}
-                <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-[#D4AF37]/20 to-transparent rounded-3xl blur-3xl translate-x-5 translate-y-5"></div>
-                  
-                  <div className="relative z-10 w-full max-w-md mx-auto lg:max-w-none">
-                    <img 
-                      src="Lukas.png"
-                      alt="Lukas Zamrzla" 
-                      className="w-full h-[450px] sm:h-[550px] lg:h-[600px] object-cover rounded-2xl border border-white/10 shadow-2xl grayscale-[15%] contrast-125"
-                    />
+          /* GPU-friendly Ambient Background Glows (replaces heavy blur-[150px] on iOS) */
+          h('div', {
+            className: 'fixed inset-0 z-0 pointer-events-none',
+            style: {
+              background: 'radial-gradient(circle at 10% 15%, rgba(212,175,55,0.06) 0%, transparent 45%), radial-gradient(circle at 85% 85%, rgba(19,27,46,0.9) 0%, transparent 55%)'
+            }
+          }),
 
-                    {/* Badge 1 */}
-                    <div className="hidden sm:flex absolute -left-8 top-10 z-20 bg-[#131B2E]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
-                        <i data-lucide="landmark" class="w-5 h-5"></i>
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-white">{t.hero.stat1}</div>
-                        <div className="text-xs text-white/60">{t.hero.stat1Sub}</div>
-                      </div>
-                    </div>
+          /* 1. NAVIGATION BAR */
+          h('header', {
+            className: `fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || mobileMenuOpen ? 'bg-[#0A0F1D]/95 backdrop-blur-md border-b border-white/10 py-4' : 'bg-transparent py-6'}`
+          },
+            h('div', { className: 'max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center' },
+              h('a', { href: '#', className: 'flex items-center gap-1 cursor-pointer' },
+                h('span', { className: 'text-xl font-bold tracking-widest text-white' }, 'LUKAS ZAMRZLA'),
+                h('span', { className: 'w-1.5 h-1.5 rounded-full bg-[#D4AF37] mb-1' })
+              ),
 
-                    {/* Badge 2 */}
-                    <div className="hidden sm:flex absolute -right-6 top-1/2 -translate-y-1/2 z-20 bg-[#131B2E]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
-                        <i data-lucide="building-2" class="w-5 h-5"></i>
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-white">{t.hero.stat2}</div>
-                        <div className="text-xs text-white/60 w-28">{t.hero.stat2Sub}</div>
-                      </div>
-                    </div>
+              /* Desktop Links */
+              h('nav', { className: 'hidden lg:flex gap-8 items-center text-sm font-medium text-white/70' },
+                h('a', { href: '#services', className: 'hover:text-[#D4AF37] transition-colors' }, t.nav.services),
+                h('a', { href: '#why-me', className: 'hover:text-[#D4AF37] transition-colors' }, t.nav.whyMe),
+                h('a', { href: '#experience', className: 'hover:text-[#D4AF37] transition-colors' }, t.nav.experience),
+                h('a', { href: '#contact', className: 'hover:text-[#D4AF37] transition-colors' }, t.nav.contact)
+              ),
 
-                    {/* Badge 3 */}
-                    <div className="hidden sm:flex absolute -left-6 bottom-10 z-20 bg-[#131B2E]/90 backdrop-blur-xl border border-[#D4AF37]/30 rounded-2xl p-4 shadow-[0_0_30px_rgba(212,175,55,0.15)] items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
-                        <i data-lucide="trending-up" class="w-5 h-5"></i>
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-white">{t.hero.stat3}</div>
-                        <div className="text-xs text-[#D4AF37] font-medium">{t.hero.stat3Sub}</div>
-                      </div>
-                    </div>
-                  </div>
+              /* Desktop Language Switcher & CTA */
+              h('div', { className: 'hidden lg:flex items-center gap-6' },
+                h('button', {
+                  type: 'button',
+                  onClick: () => setLang(lang === 'en' ? 'cs' : 'en'),
+                  className: 'flex items-center gap-2 text-xs font-bold tracking-wider text-white/50 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5 border border-white/10'
+                },
+                  h(Icon, { name: 'globe-2', className: `w-4 h-4 ${lang === 'en' ? 'text-[#D4AF37]' : ''}` }),
+                  h('span', { className: lang === 'en' ? 'text-white' : '' }, 'EN'),
+                  h('span', { className: 'text-white/20' }, '|'),
+                  h('span', { className: lang === 'cs' ? 'text-white' : '' }, 'CZ')
+                ),
+                h('a', {
+                  href: '#contact',
+                  className: 'flex items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] px-6 py-2.5 rounded-sm font-semibold transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_25px_rgba(212,175,55,0.5)]'
+                }, t.nav.bookBtn)
+              ),
 
-                  {/* Mobile Stats */}
-                  <div className="grid grid-cols-3 gap-2 mt-6 sm:hidden">
-                    <div className="bg-[#131B2E] border border-white/10 rounded-xl p-3 text-center">
-                      <div className="text-base font-bold text-[#D4AF37]">{t.hero.stat1}</div>
-                      <div className="text-[10px] text-white/60 leading-tight mt-1">{t.hero.stat1Sub}</div>
-                    </div>
-                    <div className="bg-[#131B2E] border border-white/10 rounded-xl p-3 text-center">
-                      <div className="text-base font-bold text-white">{t.hero.stat2}</div>
-                      <div className="text-[10px] text-white/60 leading-tight mt-1">{t.hero.stat2Sub}</div>
-                    </div>
-                    <div className="bg-[#131B2E] border border-[#D4AF37]/30 rounded-xl p-3 text-center">
-                      <div className="text-base font-bold text-[#D4AF37]">{t.hero.stat3}</div>
-                      <div className="text-[10px] text-white/60 leading-tight mt-1">{t.hero.stat3Sub}</div>
-                    </div>
-                  </div>
+              /* Mobile Menu Controls */
+              h('div', { className: 'flex items-center gap-3 lg:hidden' },
+                h('button', {
+                  type: 'button',
+                  onClick: () => setLang(lang === 'en' ? 'cs' : 'en'),
+                  className: 'flex items-center gap-1 text-xs font-bold text-[#D4AF37] bg-white/5 border border-white/10 px-2.5 py-1.5 rounded'
+                },
+                  h(Icon, { name: 'globe-2', className: 'w-3.5 h-3.5' }),
+                  h('span', null, lang.toUpperCase())
+                ),
+                h('button', {
+                  type: 'button',
+                  'aria-label': 'Toggle Menu',
+                  onClick: () => setMobileMenuOpen(!mobileMenuOpen),
+                  className: 'text-white p-2 focus:outline-none'
+                },
+                  h(Icon, { name: mobileMenuOpen ? 'x' : 'menu', className: 'w-6 h-6 text-[#D4AF37]' })
+                )
+              )
+            ),
 
-                </div>
-              </div>
-            </section>
+            /* Mobile Dropdown Menu */
+            mobileMenuOpen && h('div', { className: 'lg:hidden bg-[#0A0F1D] border-b border-white/10 px-6 py-6' },
+              h('nav', { className: 'flex flex-col gap-4 text-base font-medium' },
+                h('a', { href: '#services', onClick: () => setMobileMenuOpen(false), className: 'py-2 border-b border-white/5 text-white/80' }, t.nav.services),
+                h('a', { href: '#why-me', onClick: () => setMobileMenuOpen(false), className: 'py-2 border-b border-white/5 text-white/80' }, t.nav.whyMe),
+                h('a', { href: '#experience', onClick: () => setMobileMenuOpen(false), className: 'py-2 border-b border-white/5 text-white/80' }, t.nav.experience),
+                h('a', { href: '#contact', onClick: () => setMobileMenuOpen(false), className: 'py-2 border-b border-white/5 text-white/80' }, t.nav.contact),
+                h('a', { href: '#contact', onClick: () => setMobileMenuOpen(false), className: 'mt-2 text-center bg-[#D4AF37] text-[#0A0F1D] py-3 rounded-sm font-bold' }, t.nav.bookBtn)
+              )
+            )
+          ),
 
-            {/* 3. CORE SERVICES */}
-            <section id="services" className="py-24 bg-[#131B2E]/40 border-t border-white/5 relative">
-              <div className="max-w-7xl mx-auto px-6 md:px-12">
-                <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">{t.services.title}</h2>
-                  <p className="text-white/60 text-lg">{t.services.subtitle}</p>
-                </div>
+          /* MAIN CONTENT */
+          h('main', { className: 'relative z-10' },
 
-                <div className="grid lg:grid-cols-3 gap-8 items-stretch">
-                  
-                  {/* Card 1: Featured Report */}
-                  <div className="lg:col-span-1 bg-[#131B2E] border-2 border-[#D4AF37] rounded-3xl p-8 relative flex flex-col justify-between shadow-[0_0_30px_rgba(212,175,55,0.15)] order-1 lg:order-2">
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#D4AF37] text-[#0A0F1D] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">
-                      {t.services.badge}
-                    </div>
+            /* 2. HERO SECTION */
+            h('section', { className: 'min-h-screen flex items-center pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto' },
+              h('div', { className: 'w-full grid lg:grid-cols-12 gap-12 items-center' },
 
-                    <div>
-                      <div className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-2">{t.services.card1Title}</div>
-                      <div className="text-4xl font-extrabold text-white mb-6">{t.services.card1Price}</div>
-                      
-                      <ul className="space-y-4 mb-8 text-sm text-white/80">
-                        {t.services.card1List.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-3">
-                            <i data-lucide="check-circle" class="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5"></i>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                /* Left Column */
+                h('div', { className: 'lg:col-span-7 space-y-8' },
+                  h('div', { className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs md:text-sm font-medium text-[#D4AF37]' },
+                    h(Icon, { name: 'shield-check', className: 'w-4 h-4 shrink-0' }),
+                    h('span', null, t.hero.badge)
+                  ),
+                  h('h1', { className: 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight' },
+                    t.hero.title1,
+                    h('span', { className: 'text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB]' }, t.hero.titleHighlight),
+                    t.hero.title2
+                  ),
+                  h('p', { className: 'text-base sm:text-lg md:text-xl text-white/70 max-w-2xl leading-relaxed' }, t.hero.subtitle),
+                  h('div', { className: 'flex flex-col sm:flex-row gap-4 pt-4' },
+                    h('a', { href: '#services', className: 'flex justify-center items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] px-8 py-4 rounded-sm font-bold transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] text-center' }, t.hero.btnPrimary),
+                    h('a', { href: '#contact', className: 'flex justify-center items-center gap-2 bg-transparent border border-white/20 hover:border-white/50 hover:bg-white/5 text-white px-8 py-4 rounded-sm font-bold transition-all text-center' }, t.hero.btnSecondary)
+                  )
+                ),
 
-                    <div className="space-y-4 pt-6 border-t border-white/10">
-                      <div className="bg-[#D4AF37]/10 rounded-xl p-3 text-xs text-[#D4AF37]">
-                        <strong>{t.services.card1Bonus}</strong> {t.services.card1BonusText}
-                      </div>
-                      <a href="#contact" className="w-full flex justify-center items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-3.5 rounded-xl transition-all text-center">
-                        {t.services.card1Btn}
-                      </a>
-                    </div>
-                  </div>
+                /* Right Column (Photo & Floating Badges) */
+                h('div', { className: 'lg:col-span-5 relative mt-8 lg:mt-0' },
+                  h('div', { className: 'relative z-10 w-full max-w-md mx-auto lg:max-w-none' },
+                    h('img', {
+                      src: 'Lukas.webp',
+                      alt: 'Lukas Zamrzla',
+                      width: 800,
+                      height: 1000,
+                      fetchpriority: 'high',
+                      decoding: 'async',
+                      onError: (e) => {
+                        if (!e.currentTarget.dataset.fallback) {
+                          e.currentTarget.dataset.fallback = '1';
+                          e.currentTarget.src = 'Lukas.png';
+                        }
+                      },
+                      className: 'w-full h-[450px] sm:h-[550px] lg:h-[600px] object-cover rounded-2xl border border-white/10 shadow-2xl grayscale-[15%] contrast-125 bg-[#131B2E]'
+                    }),
 
-                  {/* Card 2: Consultation */}
-                  <div className="bg-[#131B2E]/80 border border-white/10 hover:border-white/20 rounded-3xl p-8 flex flex-col justify-between transition-all order-2 lg:order-1">
-                    <div>
-                      <div className="text-sm font-bold text-white/50 uppercase tracking-widest mb-2">{t.services.card2Title}</div>
-                      <div className="text-4xl font-extrabold text-white mb-2">
-                        {t.services.card2Price} <span className="text-lg font-normal text-white/50">{t.services.card2PriceSub}</span>
-                      </div>
-                      <p className="text-white/70 text-sm mb-6 leading-relaxed">{t.services.card2Desc}</p>
-                      
-                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-emerald-400 mb-6">
-                        <strong>{t.services.card2Guarantee}</strong> {t.services.card2GuaranteeText}
-                      </div>
-                    </div>
+                    /* Badge 1 */
+                    h('div', { className: 'hidden sm:flex absolute -left-8 top-10 z-20 bg-[#131B2E]/95 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl items-center gap-4' },
+                      h('div', { className: 'w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]' },
+                        h(Icon, { name: 'landmark', className: 'w-5 h-5' })
+                      ),
+                      h('div', null,
+                        h('div', { className: 'text-lg font-bold text-white' }, t.hero.stat1),
+                        h('div', { className: 'text-xs text-white/60' }, t.hero.stat1Sub)
+                      )
+                    ),
 
-                    <a href="#contact" className="w-full flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-xl transition-all text-center">
-                      {t.services.card2Btn}
-                    </a>
-                  </div>
+                    /* Badge 2 */
+                    h('div', { className: 'hidden sm:flex absolute -right-6 top-1/2 -translate-y-1/2 z-20 bg-[#131B2E]/95 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl items-center gap-4' },
+                      h('div', { className: 'w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]' },
+                        h(Icon, { name: 'building-2', className: 'w-5 h-5' })
+                      ),
+                      h('div', null,
+                        h('div', { className: 'text-lg font-bold text-white' }, t.hero.stat2),
+                        h('div', { className: 'text-xs text-white/60 w-28' }, t.hero.stat2Sub)
+                      )
+                    ),
 
-                  {/* Card 3: Retainer */}
-                  <div className="bg-[#131B2E]/80 border border-white/10 hover:border-white/20 rounded-3xl p-8 flex flex-col justify-between transition-all order-3">
-                    <div>
-                      <div className="text-sm font-bold text-white/50 uppercase tracking-widest mb-2">{t.services.card3Title}</div>
-                      <div className="text-3xl font-bold text-white mb-4">{t.services.card3Price}</div>
-                      <p className="text-white/70 text-sm mb-6 leading-relaxed">{t.services.card3Desc}</p>
-                      
-                      <ul className="space-y-3 mb-6 text-sm text-white/70">
-                        {t.services.card3List.map((item, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-[#D4AF37]"></i>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    /* Badge 3 */
+                    h('div', { className: 'hidden sm:flex absolute -left-6 bottom-10 z-20 bg-[#131B2E]/95 backdrop-blur-md border border-[#D4AF37]/30 rounded-2xl p-4 shadow-[0_0_30px_rgba(212,175,55,0.15)] items-center gap-4' },
+                      h('div', { className: 'w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]' },
+                        h(Icon, { name: 'trending-up', className: 'w-5 h-5' })
+                      ),
+                      h('div', null,
+                        h('div', { className: 'text-lg font-bold text-white' }, t.hero.stat3),
+                        h('div', { className: 'text-xs text-[#D4AF37] font-medium' }, t.hero.stat3Sub)
+                      )
+                    )
+                  ),
 
-                    <a href="#contact" className="w-full flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-xl transition-all text-center">
-                      {t.services.card3Btn}
-                    </a>
-                  </div>
+                  /* Mobile Stats */
+                  h('div', { className: 'grid grid-cols-3 gap-2 mt-6 sm:hidden' },
+                    h('div', { className: 'bg-[#131B2E] border border-white/10 rounded-xl p-3 text-center' },
+                      h('div', { className: 'text-base font-bold text-[#D4AF37]' }, t.hero.stat1),
+                      h('div', { className: 'text-[10px] text-white/60 leading-tight mt-1' }, t.hero.stat1Sub)
+                    ),
+                    h('div', { className: 'bg-[#131B2E] border border-white/10 rounded-xl p-3 text-center' },
+                      h('div', { className: 'text-base font-bold text-white' }, t.hero.stat2),
+                      h('div', { className: 'text-[10px] text-white/60 leading-tight mt-1' }, t.hero.stat2Sub)
+                    ),
+                    h('div', { className: 'bg-[#131B2E] border border-[#D4AF37]/30 rounded-xl p-3 text-center' },
+                      h('div', { className: 'text-base font-bold text-[#D4AF37]' }, t.hero.stat3),
+                      h('div', { className: 'text-[10px] text-white/60 leading-tight mt-1' }, t.hero.stat3Sub)
+                    )
+                  )
+                )
+              )
+            ),
 
-                </div>
-              </div>
-            </section>
+            /* 3. CORE SERVICES */
+            h('section', { id: 'services', className: 'py-24 bg-[#131B2E]/40 border-t border-white/5 relative' },
+              h('div', { className: 'max-w-7xl mx-auto px-6 md:px-12' },
+                h('div', { className: 'text-center max-w-3xl mx-auto mb-16 space-y-4' },
+                  h('h2', { className: 'text-3xl sm:text-4xl md:text-5xl font-bold' }, t.services.title),
+                  h('p', { className: 'text-white/60 text-lg' }, t.services.subtitle)
+                ),
 
-            {/* 4. ROI CALCULATOR */}
-            <section className="py-24 bg-[#0A0F1D] relative">
-              <div className="max-w-5xl mx-auto px-6 md:px-12">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.roi.title}</h2>
-                  <p className="text-white/60">{t.roi.subtitle}</p>
-                </div>
+                h('div', { className: 'grid lg:grid-cols-3 gap-8 items-stretch' },
 
-                <div className="bg-[#131B2E] border border-white/10 rounded-3xl p-2 max-w-md mx-auto flex mb-12">
-                  <button 
-                    onClick={() => setRoiMode('trial')}
-                    className={`flex-1 py-3 px-4 text-sm font-bold rounded-2xl transition-all ${roiMode === 'trial' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'text-white/50 hover:text-white'}`}
-                  >
-                    {t.roi.btnTrial}
-                  </button>
-                  <button 
-                    onClick={() => setRoiMode('expert')}
-                    className={`flex-1 py-3 px-4 text-sm font-bold rounded-2xl transition-all ${roiMode === 'expert' ? 'bg-[#D4AF37] text-[#0A0F1D]' : 'text-white/50 hover:text-white'}`}
-                  >
-                    {t.roi.btnExpert}
-                  </button>
-                </div>
+                  /* Card 1: Featured Report */
+                  h('div', { className: 'lg:col-span-1 bg-[#131B2E] border-2 border-[#D4AF37] rounded-3xl p-8 relative flex flex-col justify-between shadow-[0_0_30px_rgba(212,175,55,0.15)] order-1 lg:order-2' },
+                    h('div', { className: 'absolute -top-4 left-1/2 -translate-x-1/2 bg-[#D4AF37] text-[#0A0F1D] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider whitespace-nowrap' }, t.services.badge),
+                    h('div', null,
+                      h('div', { className: 'text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-2' }, t.services.card1Title),
+                      h('div', { className: 'text-4xl font-extrabold text-white mb-6' }, t.services.card1Price),
+                      h('ul', { className: 'space-y-4 mb-8 text-sm text-white/80' },
+                        t.services.card1List.map((item, idx) =>
+                          h('li', { key: idx, className: 'flex items-start gap-3' },
+                            h(Icon, { name: 'check-circle', className: 'w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5' }),
+                            h('span', null, item)
+                          )
+                        )
+                      )
+                    ),
+                    h('div', { className: 'space-y-4 pt-6 border-t border-white/10' },
+                      h('div', { className: 'bg-[#D4AF37]/10 rounded-xl p-3 text-xs text-[#D4AF37]' },
+                        h('strong', null, t.services.card1Bonus), ' ', t.services.card1BonusText
+                      ),
+                      h('a', { href: '#contact', className: 'w-full flex justify-center items-center gap-2 bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-3.5 rounded-xl transition-all text-center' }, t.services.card1Btn)
+                    )
+                  ),
 
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#131B2E]/50 backdrop-blur-sm min-h-[320px]">
-                  {roiMode === 'trial' ? (
-                    <div className="p-8 md:p-12 flex flex-col justify-center">
-                      <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
-                        <div className="w-20 h-20 shrink-0 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20">
-                          <i data-lucide="alert-triangle" class="w-10 h-10"></i>
-                        </div>
-                        <div>
-                          <h3 className="text-2xl font-bold text-red-400 mb-4">{t.roi.trialTitle}</h3>
-                          <ul className="space-y-2 text-white/70 mb-6 text-sm">
-                            {t.roi.trialList.map((item, i) => (
-                              <li key={i}>• {item}</li>
-                            ))}
-                          </ul>
-                          <div className="text-lg md:text-xl font-bold">{t.roi.trialLoss} <span className="text-red-400">{t.roi.trialLossVal}</span></div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-8 md:p-12 flex flex-col justify-center">
-                      <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
-                        <div className="w-20 h-20 shrink-0 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
-                          <i data-lucide="shield-check" class="w-10 h-10"></i>
-                        </div>
-                        <div>
-                          <h3 className="text-2xl font-bold text-[#D4AF37] mb-4">{t.roi.expertTitle}</h3>
-                          <ul className="space-y-2 text-white/70 mb-6 text-sm">
-                            {t.roi.expertList.map((item, i) => (
-                              <li key={i}>• {item}</li>
-                            ))}
-                          </ul>
-                          <div className="text-lg md:text-xl font-bold">{t.roi.expertInvest} <span className="text-[#D4AF37]">{t.roi.expertInvestVal}</span></div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
+                  /* Card 2: Consultation */
+                  h('div', { className: 'bg-[#131B2E]/80 border border-white/10 hover:border-white/20 rounded-3xl p-8 flex flex-col justify-between transition-all order-2 lg:order-1' },
+                    h('div', null,
+                      h('div', { className: 'text-sm font-bold text-white/50 uppercase tracking-widest mb-2' }, t.services.card2Title),
+                      h('div', { className: 'text-4xl font-extrabold text-white mb-2' },
+                        t.services.card2Price, ' ',
+                        h('span', { className: 'text-lg font-normal text-white/50' }, t.services.card2PriceSub)
+                      ),
+                      h('p', { className: 'text-white/70 text-sm mb-6 leading-relaxed' }, t.services.card2Desc),
+                      h('div', { className: 'bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-emerald-400 mb-6' },
+                        h('strong', null, t.services.card2Guarantee), ' ', t.services.card2GuaranteeText
+                      )
+                    ),
+                    h('a', { href: '#contact', className: 'w-full flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-xl transition-all text-center' }, t.services.card2Btn)
+                  ),
 
-            {/* 5. WHY ME (Timeline) */}
-            <section id="why-me" className="py-24 bg-[#0A0F1D] relative border-t border-white/5">
-              <div className="max-w-7xl mx-auto px-6 md:px-12">
-                <div className="mb-16">
-                  <h2 className="text-3xl md:text-5xl font-bold mb-4">{t.whyMe.title}</h2>
-                  <div className="w-24 h-1 bg-[#D4AF37] rounded-full"></div>
-                </div>
+                  /* Card 3: Retainer */
+                  h('div', { className: 'bg-[#131B2E]/80 border border-white/10 hover:border-white/20 rounded-3xl p-8 flex flex-col justify-between transition-all order-3' },
+                    h('div', null,
+                      h('div', { className: 'text-sm font-bold text-white/50 uppercase tracking-widest mb-2' }, t.services.card3Title),
+                      h('div', { className: 'text-3xl font-bold text-white mb-4' }, t.services.card3Price),
+                      h('p', { className: 'text-white/70 text-sm mb-6 leading-relaxed' }, t.services.card3Desc),
+                      h('ul', { className: 'space-y-3 mb-6 text-sm text-white/70' },
+                        t.services.card3List.map((item, idx) =>
+                          h('li', { key: idx, className: 'flex items-center gap-2' },
+                            h(Icon, { name: 'chevron-right', className: 'w-4 h-4 text-[#D4AF37] shrink-0' }),
+                            h('span', null, item)
+                          )
+                        )
+                      )
+                    ),
+                    h('a', { href: '#contact', className: 'w-full flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-xl transition-all text-center' }, t.services.card3Btn)
+                  )
+                )
+              )
+            ),
 
-                <div className="grid lg:grid-cols-2 gap-16">
-                  
-                  {/* Left Column */}
-                  <div className="space-y-8">
-                    <p className="text-lg text-white/80 leading-relaxed">{t.whyMe.desc}</p>
-                    
-                    <ul className="space-y-6">
-                      <li className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]">
-                          <i data-lucide="globe" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-lg mb-1">{t.whyMe.p1Title}</h4>
-                          <p className="text-sm text-white/60">{t.whyMe.p1Desc}</p>
-                        </div>
-                      </li>
-                      <li className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]">
-                          <i data-lucide="building-2" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-lg mb-1">{t.whyMe.p2Title}</h4>
-                          <p className="text-sm text-white/60">{t.whyMe.p2Desc}</p>
-                        </div>
-                      </li>
-                      <li className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]">
-                          <i data-lucide="award" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-lg mb-1">{t.whyMe.p3Title}</h4>
-                          <p className="text-sm text-white/60">{t.whyMe.p3Desc}</p>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
+            /* 4. ROI CALCULATOR */
+            h('section', { className: 'py-24 bg-[#0A0F1D] relative' },
+              h('div', { className: 'max-w-5xl mx-auto px-6 md:px-12' },
+                h('div', { className: 'text-center mb-12' },
+                  h('h2', { className: 'text-3xl md:text-4xl font-bold mb-4' }, t.roi.title),
+                  h('p', { className: 'text-white/60' }, t.roi.subtitle)
+                ),
 
-                  {/* Right Column (Timeline) */}
-                  <div id="experience" className="relative pl-8 md:pl-0">
-                    <div className="absolute left-[7px] md:left-[27px] top-2 bottom-2 w-px bg-white/10"></div>
-                    
-                    <div className="space-y-12">
-                      <div className="relative md:pl-16">
-                        <div className="absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-[#D4AF37] ring-4 ring-[#0A0F1D]"></div>
-                        <div className="text-sm font-bold text-[#D4AF37] mb-1">{t.whyMe.time1Date}</div>
-                        <h4 className="text-xl font-bold mb-1">{t.whyMe.time1Title}</h4>
-                        <div className="text-sm text-white/50 mb-3">{t.whyMe.time1Org}</div>
-                        <p className="text-sm text-white/70">{t.whyMe.time1Desc}</p>
-                      </div>
+                h('div', { className: 'bg-[#131B2E] border border-white/10 rounded-3xl p-2 max-w-md mx-auto flex mb-12' },
+                  h('button', {
+                    type: 'button',
+                    onClick: () => setRoiMode('trial'),
+                    className: `flex-1 py-3 px-4 text-sm font-bold rounded-2xl transition-all ${roiMode === 'trial' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'text-white/50 hover:text-white'}`
+                  }, t.roi.btnTrial),
+                  h('button', {
+                    type: 'button',
+                    onClick: () => setRoiMode('expert'),
+                    className: `flex-1 py-3 px-4 text-sm font-bold rounded-2xl transition-all ${roiMode === 'expert' ? 'bg-[#D4AF37] text-[#0A0F1D]' : 'text-white/50 hover:text-white'}`
+                  }, t.roi.btnExpert)
+                ),
 
-                      <div className="relative md:pl-16">
-                        <div className="absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-white/20 ring-4 ring-[#0A0F1D]"></div>
-                        <div className="text-sm font-bold text-white/40 mb-1">{t.whyMe.time2Date}</div>
-                        <h4 className="text-xl font-bold mb-1">{t.whyMe.time2Title}</h4>
-                        <div className="text-sm text-white/50 mb-3">{t.whyMe.time2Org}</div>
-                        <p className="text-sm text-white/70">{t.whyMe.time2Desc}</p>
-                      </div>
+                h('div', { className: 'relative overflow-hidden rounded-3xl border border-white/10 bg-[#131B2E]/50 min-h-[320px]' },
+                  roiMode === 'trial'
+                    ? h('div', { className: 'p-8 md:p-12 flex flex-col justify-center' },
+                        h('div', { className: 'flex flex-col md:flex-row items-start md:items-center gap-8' },
+                          h('div', { className: 'w-20 h-20 shrink-0 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20' },
+                            h(Icon, { name: 'alert-triangle', className: 'w-10 h-10' })
+                          ),
+                          h('div', null,
+                            h('h3', { className: 'text-2xl font-bold text-red-400 mb-4' }, t.roi.trialTitle),
+                            h('ul', { className: 'space-y-2 text-white/70 mb-6 text-sm' },
+                              t.roi.trialList.map((item, i) => h('li', { key: i }, '• ', item))
+                            ),
+                            h('div', { className: 'text-lg md:text-xl font-bold' }, t.roi.trialLoss, h('span', { className: 'text-red-400' }, t.roi.trialLossVal))
+                          )
+                        )
+                      )
+                    : h('div', { className: 'p-8 md:p-12 flex flex-col justify-center' },
+                        h('div', { className: 'flex flex-col md:flex-row items-start md:items-center gap-8' },
+                          h('div', { className: 'w-20 h-20 shrink-0 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]' },
+                            h(Icon, { name: 'shield-check', className: 'w-10 h-10' })
+                          ),
+                          h('div', null,
+                            h('h3', { className: 'text-2xl font-bold text-[#D4AF37] mb-4' }, t.roi.expertTitle),
+                            h('ul', { className: 'space-y-2 text-white/70 mb-6 text-sm' },
+                              t.roi.expertList.map((item, i) => h('li', { key: i }, '• ', item))
+                            ),
+                            h('div', { className: 'text-lg md:text-xl font-bold' }, t.roi.expertInvest, h('span', { className: 'text-[#D4AF37]' }, t.roi.expertInvestVal))
+                          )
+                        )
+                      )
+                )
+              )
+            ),
 
-                      <div className="relative md:pl-16">
-                        <div className="absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-white/20 ring-4 ring-[#0A0F1D]"></div>
-                        <div className="text-sm font-bold text-white/40 mb-1">{t.whyMe.time3Date}</div>
-                        <h4 className="text-xl font-bold mb-1">{t.whyMe.time3Title}</h4>
-                        <div className="text-sm text-white/50 mb-3">{t.whyMe.time3Org}</div>
-                        <p className="text-sm text-white/70">{t.whyMe.time3Desc}</p>
-                      </div>
+            /* 5. WHY ME (Timeline) */
+            h('section', { id: 'why-me', className: 'py-24 bg-[#0A0F1D] relative border-t border-white/5' },
+              h('div', { className: 'max-w-7xl mx-auto px-6 md:px-12' },
+                h('div', { className: 'mb-16' },
+                  h('h2', { className: 'text-3xl md:text-5xl font-bold mb-4' }, t.whyMe.title),
+                  h('div', { className: 'w-24 h-1 bg-[#D4AF37] rounded-full' })
+                ),
 
-                      <div className="relative md:pl-16 pt-2">
-                        <div className="absolute left-[-21px] md:left-[23px] top-5 w-2.5 h-2.5 rounded-full bg-[#10B981] ring-4 ring-[#0A0F1D]"></div>
-                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                          <div className="flex items-start gap-3">
-                            <i data-lucide="file-check-2" class="w-5 h-5 text-[#10B981] shrink-0 mt-1"></i>
-                            <div>
-                              <h4 className="font-bold mb-1">{t.whyMe.eduTitle}</h4>
-                              <p className="text-xs text-white/60">{t.whyMe.eduDesc}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                h('div', { className: 'grid lg:grid-cols-2 gap-16' },
+                  /* Left Column */
+                  h('div', { className: 'space-y-8' },
+                    h('p', { className: 'text-lg text-white/80 leading-relaxed' }, t.whyMe.desc),
+                    h('ul', { className: 'space-y-6' },
+                      h('li', { className: 'flex gap-4' },
+                        h('div', { className: 'w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]' },
+                          h(Icon, { name: 'globe', className: 'w-5 h-5' })
+                        ),
+                        h('div', null,
+                          h('h4', { className: 'font-bold text-lg mb-1' }, t.whyMe.p1Title),
+                          h('p', { className: 'text-sm text-white/60' }, t.whyMe.p1Desc)
+                        )
+                      ),
+                      h('li', { className: 'flex gap-4' },
+                        h('div', { className: 'w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]' },
+                          h(Icon, { name: 'building-2', className: 'w-5 h-5' })
+                        ),
+                        h('div', null,
+                          h('h4', { className: 'font-bold text-lg mb-1' }, t.whyMe.p2Title),
+                          h('p', { className: 'text-sm text-white/60' }, t.whyMe.p2Desc)
+                        )
+                      ),
+                      h('li', { className: 'flex gap-4' },
+                        h('div', { className: 'w-12 h-12 rounded-full bg-[#131B2E] border border-white/10 flex items-center justify-center shrink-0 text-[#D4AF37]' },
+                          h(Icon, { name: 'award', className: 'w-5 h-5' })
+                        ),
+                        h('div', null,
+                          h('h4', { className: 'font-bold text-lg mb-1' }, t.whyMe.p3Title),
+                          h('p', { className: 'text-sm text-white/60' }, t.whyMe.p3Desc)
+                        )
+                      )
+                    )
+                  ),
 
-                    </div>
-                  </div>
+                  /* Right Column (Timeline) */
+                  h('div', { id: 'experience', className: 'relative pl-8 md:pl-0' },
+                    h('div', { className: 'absolute left-[7px] md:left-[27px] top-2 bottom-2 w-px bg-white/10' }),
+                    h('div', { className: 'space-y-12' },
+                      h('div', { className: 'relative md:pl-16' },
+                        h('div', { className: 'absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-[#D4AF37] ring-4 ring-[#0A0F1D]' }),
+                        h('div', { className: 'text-sm font-bold text-[#D4AF37] mb-1' }, t.whyMe.time1Date),
+                        h('h4', { className: 'text-xl font-bold mb-1' }, t.whyMe.time1Title),
+                        h('div', { className: 'text-sm text-white/50 mb-3' }, t.whyMe.time1Org),
+                        h('p', { className: 'text-sm text-white/70' }, t.whyMe.time1Desc)
+                      ),
+                      h('div', { className: 'relative md:pl-16' },
+                        h('div', { className: 'absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-white/20 ring-4 ring-[#0A0F1D]' }),
+                        h('div', { className: 'text-sm font-bold text-white/40 mb-1' }, t.whyMe.time2Date),
+                        h('h4', { className: 'text-xl font-bold mb-1' }, t.whyMe.time2Title),
+                        h('div', { className: 'text-sm text-white/50 mb-3' }, t.whyMe.time2Org),
+                        h('p', { className: 'text-sm text-white/70' }, t.whyMe.time2Desc)
+                      ),
+                      h('div', { className: 'relative md:pl-16' },
+                        h('div', { className: 'absolute left-[-21px] md:left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-white/20 ring-4 ring-[#0A0F1D]' }),
+                        h('div', { className: 'text-sm font-bold text-white/40 mb-1' }, t.whyMe.time3Date),
+                        h('h4', { className: 'text-xl font-bold mb-1' }, t.whyMe.time3Title),
+                        h('div', { className: 'text-sm text-white/50 mb-3' }, t.whyMe.time3Org),
+                        h('p', { className: 'text-sm text-white/70' }, t.whyMe.time3Desc)
+                      ),
+                      h('div', { className: 'relative md:pl-16 pt-2' },
+                        h('div', { className: 'absolute left-[-21px] md:left-[23px] top-5 w-2.5 h-2.5 rounded-full bg-[#10B981] ring-4 ring-[#0A0F1D]' }),
+                        h('div', { className: 'p-4 bg-white/5 rounded-2xl border border-white/10' },
+                          h('div', { className: 'flex items-start gap-3' },
+                            h(Icon, { name: 'file-check-2', className: 'w-5 h-5 text-[#10B981] shrink-0 mt-1' }),
+                            h('div', null,
+                              h('h4', { className: 'font-bold mb-1' }, t.whyMe.eduTitle),
+                              h('p', { className: 'text-xs text-white/60' }, t.whyMe.eduDesc)
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            ),
 
-                </div>
-              </div>
-            </section>
+            /* 6. CONTACT & FOOTER */
+            h('section', { id: 'contact', className: 'py-24 bg-[#131B2E] border-t border-[#D4AF37]/20 relative' },
+              h('div', { className: 'max-w-6xl mx-auto px-6 md:px-12 relative z-10' },
+                h('div', { className: 'grid lg:grid-cols-2 gap-16' },
+                  h('div', null,
+                    h('h2', { className: 'text-4xl font-bold mb-4' }, t.contact.title),
+                    h('p', { className: 'text-white/60 mb-12' }, t.contact.desc),
+                    h('div', { className: 'space-y-6' },
+                      h('div', { className: 'flex items-center gap-4' },
+                        h('div', { className: 'w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]' },
+                          h(Icon, { name: 'phone', className: 'w-5 h-5' })
+                        ),
+                        h('div', null,
+                          h('div', { className: 'text-sm text-white/50' }, 'WhatsApp / Direct'),
+                          h('a', { href: 'tel:+971502309663', className: 'text-lg font-bold hover:text-[#D4AF37] transition-colors' }, '+971 50 230 9663')
+                        )
+                      ),
+                      h('div', { className: 'flex items-center gap-4' },
+                        h('div', { className: 'w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]' },
+                          h(Icon, { name: 'mail', className: 'w-5 h-5' })
+                        ),
+                        h('div', null,
+                          h('div', { className: 'text-sm text-white/50' }, 'Email'),
+                          h('a', { href: 'mailto:ask@lukaszamrzla.com', className: 'text-lg font-bold hover:text-[#D4AF37] transition-colors' }, 'ask@lukaszamrzla.com')
+                        )
+                      ),
+                      h('div', { className: 'flex items-center gap-4' },
+                        h('div', { className: 'w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]' },
+                          h(Icon, { name: 'map-pin', className: 'w-5 h-5' })
+                        ),
+                        h('div', null,
+                          h('div', { className: 'text-sm text-white/50' }, 'Location'),
+                          h('div', { className: 'text-lg font-bold' }, 'Abu Dhabi, United Arab Emirates')
+                        )
+                      )
+                    )
+                  ),
 
-            {/* 6. CONTACT & FOOTER */}
-            <section id="contact" className="py-24 bg-[#131B2E] border-t border-[#D4AF37]/20 relative">
-              <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-16">
-                  
-                  <div>
-                    <h2 className="text-4xl font-bold mb-4">{t.contact.title}</h2>
-                    <p className="text-white/60 mb-12">{t.contact.desc}</p>
-                    
-                    <div className="space-y-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]">
-                          <i data-lucide="phone" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                          <div className="text-sm text-white/50">WhatsApp / Direct</div>
-                          <a href="tel:+971502309663" className="text-lg font-bold hover:text-[#D4AF37] transition-colors">+971 50 230 9663</a>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]">
-                          <i data-lucide="mail" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                          <div className="text-sm text-white/50">Email</div>
-                          <a href="mailto:ask@lukaszamrzla.com" className="text-lg font-bold hover:text-[#D4AF37] transition-colors">ask@lukaszamrzla.com</a>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#D4AF37]">
-                          <i data-lucide="map-pin" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                          <div className="text-sm text-white/50">Location</div>
-                          <div className="text-lg font-bold">Abu Dhabi, United Arab Emirates</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  /* Form (text-base prevents iOS Safari auto-zoom on tap) */
+                  h('div', { className: 'bg-[#0A0F1D]/80 p-8 rounded-3xl border border-white/10 shadow-2xl' },
+                    h('h3', { className: 'text-2xl font-bold mb-6' }, t.contact.formTitle),
+                    h('form', { onSubmit: handleFormSubmit, className: 'space-y-4' },
+                      h('div', { className: 'grid grid-cols-1 sm:grid-cols-2 gap-4' },
+                        h('div', null,
+                          h('label', { className: 'block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider' }, t.contact.name),
+                          h('input', { type: 'text', name: 'name', required: true, className: 'w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-[#D4AF37] transition-colors' })
+                        ),
+                        h('div', null,
+                          h('label', { className: 'block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider' }, t.contact.company),
+                          h('input', { type: 'text', name: 'company', className: 'w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-[#D4AF37] transition-colors' })
+                        )
+                      ),
+                      h('div', null,
+                        h('label', { className: 'block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider' }, t.contact.website),
+                        h('input', { type: 'text', name: 'website', className: 'w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-[#D4AF37] transition-colors' })
+                      ),
+                      h('div', null,
+                        h('label', { className: 'block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider' }, t.contact.interest),
+                        h('select', { name: 'interest', className: 'w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-[#D4AF37] transition-colors' },
+                          h('option', null, t.contact.opt1),
+                          h('option', null, t.contact.opt2),
+                          h('option', null, t.contact.opt3)
+                        )
+                      ),
+                      h('div', null,
+                        h('label', { className: 'block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider' }, t.contact.msg),
+                        h('textarea', { name: 'message', rows: 3, className: 'w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-[#D4AF37] transition-colors resize-none' })
+                      ),
+                      h('button', {
+                        type: 'submit',
+                        disabled: formStatus === 'submitting',
+                        className: 'w-full bg-[#D4AF37] hover:bg-[#C5A059] disabled:opacity-50 text-[#0A0F1D] font-bold py-4 rounded-xl transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] mt-4 flex items-center justify-center gap-2'
+                      }, formStatus === 'submitting' ? t.contact.submitting : t.contact.submit)
+                    )
+                  )
+                ),
 
-                  {/* Form */}
-                  <div className="bg-[#0A0F1D]/80 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl">
-                    <h3 className="text-2xl font-bold mb-6">{t.contact.formTitle}</h3>
-                    <form onSubmit={handleFormSubmit} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.name}</label>
-                          <input type="text" name="name" required className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.company}</label>
-                          <input type="text" name="company" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.website}</label>
-                        <input type="text" name="website" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.interest}</label>
-                        <select name="interest" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors">
-                          <option>{t.contact.opt1}</option>
-                          <option>{t.contact.opt2}</option>
-                          <option>{t.contact.opt3}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">{t.contact.msg}</label>
-                        <textarea name="message" rows="3" className="w-full bg-[#131B2E] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition-colors resize-none"></textarea>
-                      </div>
-                      <button 
-                        type="submit" 
-                        disabled={formStatus === 'submitting'} 
-                        className="w-full bg-[#D4AF37] hover:bg-[#C5A059] disabled:opacity-50 text-[#0A0F1D] font-bold py-4 rounded-xl transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] mt-4 flex items-center justify-center gap-2"
-                      >
-                        {formStatus === 'submitting' ? (
-                          <span>{t.contact.submitting}</span>
-                        ) : (
-                          <span>{t.contact.submit}</span>
-                        )}
-                      </button>
-                    </form>
-                  </div>
+                /* Footer Bar */
+                h('div', { className: 'mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4' },
+                  h('div', { className: 'flex items-center gap-1' },
+                    h('span', { className: 'text-xl font-bold tracking-widest text-white/50' }, 'LUKAS ZAMRZLA'),
+                    h('span', { className: 'w-1.5 h-1.5 rounded-full bg-[#D4AF37]/50 mb-1' })
+                  ),
+                  h('div', { className: 'text-sm text-white/40' }, '© 2026 Lukas Zamrzla. All rights reserved.'),
+                  h('div', { className: 'flex gap-4' },
+                    h('a', { href: 'https://linkedin.com/in/zamrzla', target: '_blank', rel: 'noreferrer', className: 'text-white/40 hover:text-[#D4AF37] transition-colors text-sm font-medium' }, 'LinkedIn')
+                  )
+                )
+              )
+            )
+          ),
 
-                </div>
-                
-                {/* Footer Bar */}
-                <div className="mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xl font-bold tracking-widest text-white/50">LUKAS ZAMRZLA</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/50 mb-1"></span>
-                  </div>
-                  <div className="text-sm text-white/40">
-                    © 2026 Lukas Zamrzla. All rights reserved.
-                  </div>
-                  <div className="flex gap-4">
-                    <a href="https://linkedin.com/in/zamrzla" target="_blank" rel="noreferrer" className="text-white/40 hover:text-[#D4AF37] transition-colors text-sm font-medium">LinkedIn</a>
-                  </div>
-                </div>
-              </div>
-            </section>
+          /* FORM SUBMISSION MODAL */
+          formStatus !== 'idle' && formStatus !== 'submitting' && h('div', { className: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md' },
+            h('div', { className: 'bg-[#131B2E] border border-[#D4AF37]/40 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(212,175,55,0.2)] text-center relative' },
+              h('button', {
+                type: 'button',
+                onClick: () => setFormStatus('idle'),
+                className: 'absolute top-4 right-4 text-white/50 hover:text-white p-2'
+              }, h(Icon, { name: 'x', className: 'w-5 h-5' })),
+              formStatus === 'success'
+                ? h('div', null,
+                    h('div', { className: 'w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto mb-4 text-[#D4AF37]' },
+                      h(Icon, { name: 'check-circle-2', className: 'w-8 h-8' })
+                    ),
+                    h('h3', { className: 'text-2xl font-bold text-white mb-2' }, t.contact.successTitle),
+                    h('p', { className: 'text-white/70 text-sm mb-6 leading-relaxed' }, t.contact.successMsg),
+                    h('button', {
+                      type: 'button',
+                      onClick: () => setFormStatus('idle'),
+                      className: 'w-full bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-3 rounded-xl transition-all'
+                    }, t.contact.closeBtn)
+                  )
+                : h('div', null,
+                    h('div', { className: 'w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-4 text-red-400' },
+                      h(Icon, { name: 'alert-circle', className: 'w-8 h-8' })
+                    ),
+                    h('h3', { className: 'text-2xl font-bold text-white mb-2' }, 'Error'),
+                    h('p', { className: 'text-white/70 text-sm mb-6 leading-relaxed' }, t.contact.errorMsg),
+                    h('button', {
+                      type: 'button',
+                      onClick: () => setFormStatus('idle'),
+                      className: 'w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-all'
+                    }, t.contact.closeBtn)
+                  )
+            )
+          )
+        );
+      }
 
-          </main>
-
-          {/* ELEGANT MODAL POPUP FOR FORM SUBMISSION */}
-          {formStatus !== 'idle' && formStatus !== 'submitting' && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-              <div className="bg-[#131B2E] border border-[#D4AF37]/40 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(212,175,55,0.2)] text-center relative">
-                <button 
-                  onClick={() => setFormStatus('idle')}
-                  className="absolute top-4 right-4 text-white/50 hover:text-white p-2"
-                >
-                  <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-
-                {formStatus === 'success' ? (
-                  <div>
-                    <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto mb-4 text-[#D4AF37]">
-                      <i data-lucide="check-circle-2" class="w-8 h-8"></i>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">{t.contact.successTitle}</h3>
-                    <p className="text-white/70 text-sm mb-6 leading-relaxed">{t.contact.successMsg}</p>
-                    <button 
-                      onClick={() => setFormStatus('idle')}
-                      className="w-full bg-[#D4AF37] hover:bg-[#C5A059] text-[#0A0F1D] font-bold py-3 rounded-xl transition-all"
-                    >
-                      {t.contact.closeBtn}
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-4 text-red-400">
-                      <i data-lucide="alert-circle" class="w-8 h-8"></i>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Error</h3>
-                    <p className="text-white/70 text-sm mb-6 leading-relaxed">{t.contact.errorMsg}</p>
-                    <button 
-                      onClick={() => setFormStatus('idle')}
-                      className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-all"
-                    >
-                      {t.contact.closeBtn}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+      ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+    });
   </script>
 </body>
 </html>
